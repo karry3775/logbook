@@ -1,0 +1,14 @@
+---
+title: "Test Math"
+date: "2025-08-24"
+---
+
+## Math Test
+
+Inline math: $z_i$ and $\theta_i$ 
+
+Display math:
+$$T_i^{i-1} = \begin{bmatrix}
+\cos\theta_i & -\sin\theta_i \\
+\sin\theta_i & \cos\theta_i
+\end{bmatrix}$$
