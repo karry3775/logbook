@@ -1,10 +1,17 @@
 [
   {
+    "objectID": "logs/2025-08-24.html",
+    "href": "logs/2025-08-24.html",
+    "title": "Daily Log: 2025-08-24",
+    "section": "",
+    "text": "Read through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong\nSpent a bunch of time figuring out the correct format to log notes to github.\nExperimented with Jekyll and Hugo, both of which sucked at rendering LaTex\nFinally after much experimentation Quarto seemed like a good option\nThis is a sample file using quarto’s math rendering link"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Logbook",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+    "text": "Logbook\n\n2025-08-24"
   },
   {
     "objectID": "about.html",
@@ -14,17 +21,17 @@
     "text": "About this site"
   },
   {
-    "objectID": "math.html",
-    "href": "math.html",
-    "title": "Test Math",
+    "objectID": "test/math.html",
+    "href": "test/math.html",
+    "title": "Math Notes",
     "section": "",
-    "text": "Inline math: \\(z_i\\) and \\(\\theta_i\\)\nDisplay math: \\[T_i^{i-1} = \\begin{bmatrix}\n\\cos\\theta_i & -\\sin\\theta_i \\\\\n\\sin\\theta_i & \\cos\\theta_i\n\\end{bmatrix}\\]"
+    "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)\n\n\\(\\displaystyle 2 x + 3\\)"
   },
   {
-    "objectID": "math.html#math-test",
-    "href": "math.html#math-test",
-    "title": "Test Math",
+    "objectID": "test/math.html#derivatives",
+    "href": "test/math.html#derivatives",
+    "title": "Math Notes",
     "section": "",
-    "text": "Inline math: \\(z_i\\) and \\(\\theta_i\\)\nDisplay math: \\[T_i^{i-1} = \\begin{bmatrix}\n\\cos\\theta_i & -\\sin\\theta_i \\\\\n\\sin\\theta_i & \\cos\\theta_i\n\\end{bmatrix}\\]"
+    "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)\n\n\\(\\displaystyle 2 x + 3\\)"
   }
 ]
