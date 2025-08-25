@@ -1,0 +1,30 @@
+---
+title: "Math Notes"
+format: html
+---
+
+# Calculus Notes
+
+## Derivatives
+
+The derivative of a function \(f(x)\) is defined as:
+
+$$
+f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
+$$
+
+Example in Python using Sympy:
+
+```{python}
+#| eval: true
+import sympy as sp
+from sympy import init_printing
+
+init_printing()  # pretty LaTeX-style output in HTML
+
+x = sp.symbols('x')
+f = x**2 + 3*x + 2
+
+# Compute derivative
+sp.diff(f, x)
+```

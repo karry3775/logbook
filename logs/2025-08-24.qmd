@@ -1,0 +1,11 @@
+
+---
+title: "Daily Log: 2025-08-24"
+format: html
+---
+
+- Read through Chatper 1: Introduction to Robotics of "Robot Modelling and control" by Spong
+- Spent a bunch of time figuring out the correct format to log notes to github.
+- Experimented with Jekyll and Hugo, both of which sucked at rendering LaTex
+- Finally after much experimentation Quarto seemed like a good option
+- This is a sample file using quarto's math rendering [link](../test/math.qmd)

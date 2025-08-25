@@ -7,5 +7,14 @@
   },
   "math.qmd": {
     "math.html": "a137168d"
+  },
+  "logs/2025-08-24.md": {
+    "2025-08-24.html": "63b4cbc6"
+  },
+  "logs/2025-08-24.qmd": {
+    "2025-08-24.html": "5a03a07a"
+  },
+  "test/math.qmd": {
+    "math.html": "e232d281"
   }
 }
