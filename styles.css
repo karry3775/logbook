@@ -1,1 +1,5 @@
-/* css styles */
+body .container {
+    max-width: 100% !important;
+    padding: 1rem;  /* optional: give a little padding */
+}
+

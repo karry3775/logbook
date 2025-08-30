@@ -1,24 +1,24 @@
 [
   {
-    "objectID": "logs/2025-08-24.html",
-    "href": "logs/2025-08-24.html",
-    "title": "Daily Log: 2025-08-24",
+    "objectID": "logs/2025-08-30.html",
+    "href": "logs/2025-08-30.html",
+    "title": "Chapter 1: Robot Modeling and Control (spong)",
     "section": "",
-    "text": "Read through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong\nSpent a bunch of time figuring out the correct format to log notes to github.\nExperimented with Jekyll and Hugo, both of which sucked at rendering LaTex\nFinally after much experimentation Quarto seemed like a good option\nThis is a sample file using quarto’s math rendering link"
+    "text": "The very first robots (or so called non-servo robots) didn’t have any feedback in place. They were basically issued sequence of commands, .e.g. Move to point A, Close gripper, Move to point B, usually with hard mechanical stops or limit switches but there wasn’t any real feedback"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Logbook",
+    "objectID": "logs/2025-08-30.html#history",
+    "href": "logs/2025-08-30.html#history",
+    "title": "Chapter 1: Robot Modeling and Control (spong)",
     "section": "",
-    "text": "Logbook\n\n2025-08-24"
+    "text": "The very first robots (or so called non-servo robots) didn’t have any feedback in place. They were basically issued sequence of commands, .e.g. Move to point A, Close gripper, Move to point B, usually with hard mechanical stops or limit switches but there wasn’t any real feedback"
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
+    "objectID": "logs/2025-08-30.html#components-and-structure-of-robots",
+    "href": "logs/2025-08-30.html#components-and-structure-of-robots",
+    "title": "Chapter 1: Robot Modeling and Control (spong)",
+    "section": "1.2 Components and Structure of robots",
+    "text": "1.2 Components and Structure of robots\n\n1.2.1 Symbolic representation of robots\nBasically robots are kinematic chains, which are made up of links and joints. These joints can be revolute (R), or prismatic (P). The axis of rotation, or axis of translation is denoted by z\n\n\n1.2.2 Degrees of freedom and workspace\nDegrees of freedom\nSo actually, when we talk about degrees of freedom for a kinematic mechanism, (think four bar linkage) the degrees of freedom doesn’t directly equate to the number of joints, and is given by the Gruebler’s formula,\n\\[\nF = 3 (n - 1) - 2L - H\n\\]\nwhere:\n\n\\(F\\) = number of degrees of freedom\n\n\\(n\\) = total number of links including the fixed base\n\n\\(L\\) = total number of lower pairs (1 DOF such as pins and sliding joints)\n\n\\(H\\) = total number of higher pairs (2 DOF such as cam and gear joints)\n\nYou can refer here for more details: source\nHaving said that, for a lot of the industrial manipulators, they are designed in a way that the joints are mostly independent of each other and thus number of degrees of freedom == number of joints. For a robot to reach 3D space with arbitrary orientation, it must have atleast 6DOFs i.e. 3 for position and 3 for orientation. If a robot has more than 6 DOF, then its called a kinematically redundant chain – which is especially useful if we have to avoid obstacles.\nWorkspace\nOkay, with that out of the way, lets talk of workspace. So by definition, its the total volume swept by the end effector as it executes all possible motions. The shape of this volume depends on the robot geometry and the limits on the joints (for example a revolute joint might have less than 360 degree rotation). Its often broken down into 1. reachable workspace –&gt; Entire set of points we can physically reach 2. dextorous workspace –&gt; Subset of the workspace, where we can reach with arbitrary orientation\n\n\n1.2.3 Classification of robots\n\n\n\n\n\nflowchart LR\n    B[Power Source]\n    B --&gt; B1[Hydraulics\\n e.g. Atlas]\n    B --&gt; B2[Electrical\\n e.g. UR]\n    B --&gt; B3[Pnuematics] --- B3N[[Note: Air is compressible\\nso not very precise,\\n hence not popular]]\n\n\n\n\n\n\n\n\n\n\n\n\nflowchart LR\n    C[Application area]\n\n    C --&gt; C1[Assembly]\n    C --&gt; C2[Non-Assembly]\n\n\n\n\n\n\n\n\n\n\n\n\nflowchart LR\n    D[Method of control]\n\n    D --&gt; D1[Servo]\n    D --&gt; D2[Non-Servo]\n\n\n\n\n\n\n\n\n\n\n\n\nflowchart LR\n    E[Geometry]\n\n    E --&gt; E1[Articulate RRR]\n    E --&gt; E2[spherical RRP]\n    E --&gt; E3[SCARA RRP]\n    E --&gt; E4[Cylindrical RPP]\n    E --&gt; E5[Cartesian PPP]\n\n\n\n\n\n\n\n\n1.2.4 Common Kinematic Arrangements\n\nArticulated RRR\nElbow configuration\n\n \n\nParallelogram configuration\n\n\n\nSpherical RRP\n\n\n\nSCARA RRP\n\n\n\nCylindrical RPP\n\n\n\nCartesian PPP\n\n\n\n\n1.2.4 Wrist and End effectors\nSo far we have discussed the different kinematic configurations of a robot, and what they are typically describing is a Robot ARM. For the robot to do anything meaningful we need an end effector / hand / EoAT (end of arm tooling). Typically these EoATs are grippers, but also can be more complex depending on the need of the task. So a wrist then is anything that comes between the ARM and the EoAT\nOne interesting thing to note is that:\n\nThe ARM is usally responsible for the positional degrees of freedom\nThe WRIST typically deals with the orientational degrees of freedom\n\nWrists are also typically spherical, by that I mean, the roll/pitch/yaw axes all intersect at the same point. Here’s a synbolic representation of a wrist"
   },
   {
     "objectID": "test/math.html",
@@ -33,5 +33,26 @@
     "title": "Math Notes",
     "section": "",
     "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)\n\n\\(\\displaystyle 2 x + 3\\)"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Logbook",
+    "section": "",
+    "text": "Logbook\n\n2025-08-24\n2025-08-30"
+  },
+  {
+    "objectID": "logs/2025-08-24.html",
+    "href": "logs/2025-08-24.html",
+    "title": "Daily Log: 2025-08-24",
+    "section": "",
+    "text": "Read through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong\nSpent a bunch of time figuring out the correct format to log notes to github.\nExperimented with Jekyll and Hugo, both of which sucked at rendering LaTex\nFinally after much experimentation Quarto seemed like a good option\nThis is a sample file using quarto’s math rendering link"
   }
 ]

@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Last updated: 2025-08-30">
 
-<title>Logbook - Math Notes</title>
+<title>Logbook - Chapter 1: Robot Modeling and Control (spong)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -100,6 +67,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -175,9 +145,14 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#calculus-notes" id="toc-calculus-notes" class="nav-link active" data-scroll-target="#calculus-notes">Calculus Notes</a>
+  <li><a href="#history" id="toc-history" class="nav-link active" data-scroll-target="#history">1.1 History</a></li>
+  <li><a href="#components-and-structure-of-robots" id="toc-components-and-structure-of-robots" class="nav-link" data-scroll-target="#components-and-structure-of-robots">1.2 Components and Structure of robots</a>
   <ul class="collapse">
-  <li><a href="#derivatives" id="toc-derivatives" class="nav-link" data-scroll-target="#derivatives">Derivatives</a></li>
+  <li><a href="#symbolic-representation-of-robots" id="toc-symbolic-representation-of-robots" class="nav-link" data-scroll-target="#symbolic-representation-of-robots">1.2.1 Symbolic representation of robots</a></li>
+  <li><a href="#degrees-of-freedom-and-workspace" id="toc-degrees-of-freedom-and-workspace" class="nav-link" data-scroll-target="#degrees-of-freedom-and-workspace">1.2.2 Degrees of freedom and workspace</a></li>
+  <li><a href="#classification-of-robots" id="toc-classification-of-robots" class="nav-link" data-scroll-target="#classification-of-robots">1.2.3 Classification of robots</a></li>
+  <li><a href="#common-kinematic-arrangements" id="toc-common-kinematic-arrangements" class="nav-link" data-scroll-target="#common-kinematic-arrangements">1.2.4 Common Kinematic Arrangements</a></li>
+  <li><a href="#wrist-and-end-effectors" id="toc-wrist-and-end-effectors" class="nav-link" data-scroll-target="#wrist-and-end-effectors">1.2.4 Wrist and End effectors</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -187,9 +162,14 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Math Notes</h1>
+<h1 class="title">Chapter 1: Robot Modeling and Control (spong)</h1>
 </div>
 
+<div>
+  <div class="description">
+    <em><strong>Last updated</strong>: 2025-08-30</em>
+  </div>
+</div>
 
 
 <div class="quarto-title-meta column-page-left">
@@ -204,30 +184,149 @@ window.Quarto = {
 </header>
 
 
-<section id="calculus-notes" class="level1">
-<h1>Calculus Notes</h1>
-<section id="derivatives" class="level2">
-<h2 class="anchored" data-anchor-id="derivatives">Derivatives</h2>
-<p>The derivative of a function (f(x)) is defined as:</p>
+<section id="history" class="level2">
+<h2 class="anchored" data-anchor-id="history">1.1 History</h2>
+<p>The very first robots (or so called <strong><em>non-servo robots</em></strong>) didn’t have any feedback in place. They were basically issued sequence of commands, .e.g. Move to point A, Close gripper, Move to point B, usually with hard mechanical stops or limit switches but there wasn’t any real feedback</p>
+</section>
+<section id="components-and-structure-of-robots" class="level2">
+<h2 class="anchored" data-anchor-id="components-and-structure-of-robots">1.2 Components and Structure of robots</h2>
+<section id="symbolic-representation-of-robots" class="level3">
+<h3 class="anchored" data-anchor-id="symbolic-representation-of-robots">1.2.1 Symbolic representation of robots</h3>
+<p>Basically robots are kinematic chains, which are made up of links and joints. These joints can be revolute (R), or prismatic (P). The axis of rotation, or axis of translation is denoted by z</p>
+</section>
+<section id="degrees-of-freedom-and-workspace" class="level3">
+<h3 class="anchored" data-anchor-id="degrees-of-freedom-and-workspace">1.2.2 Degrees of freedom and workspace</h3>
+<p><u>Degrees of freedom</u></p>
+<p>So actually, when we talk about degrees of freedom for a kinematic mechanism, (think four bar linkage) the degrees of freedom doesn’t directly equate to the number of joints, and is given by the <mark>Gruebler’s formula</mark>,</p>
 <p><span class="math display">\[
-f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
+F = 3 (n - 1) - 2L - H
 \]</span></p>
-<p>Example in Python using Sympy:</p>
-<div id="34911215" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> sp</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sympy <span class="im">import</span> init_printing</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>init_printing()  <span class="co"># pretty LaTeX-style output in HTML</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> sp.symbols(<span class="st">'x'</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">3</span><span class="op">*</span>x <span class="op">+</span> <span class="dv">2</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute derivative</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sp.diff(f, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="1">
-<p><span class="math inline">\(\displaystyle 2 x + 3\)</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(F\)</span> = number of degrees of freedom<br>
+</li>
+<li><span class="math inline">\(n\)</span> = total number of links including the fixed base<br>
+</li>
+<li><span class="math inline">\(L\)</span> = total number of lower pairs (1 DOF such as pins and sliding joints)<br>
+</li>
+<li><span class="math inline">\(H\)</span> = total number of higher pairs (2 DOF such as cam and gear joints)</li>
+</ul>
+<p>You can refer here for more details: <a href="https://ezymechanic.blogspot.com/2015/07/grueblers-equation-for-calculating.html">source</a></p>
+<p>Having said that, for a lot of the industrial manipulators, they are designed in a way that the joints are mostly independent of each other and thus <mark>number of degrees of freedom == number of joints</mark>. For a robot to reach 3D space with arbitrary orientation, it must have <strong><em>atleast 6DOFs</em></strong> i.e.&nbsp;3 for position and 3 for orientation. If a robot has more than 6 DOF, then its called a <strong><em>kinematically redundant chain</em></strong> – which is especially useful if we have to avoid obstacles.</p>
+<p><u>Workspace</u></p>
+<p>Okay, with that out of the way, lets talk of workspace. So by definition, its the total volume swept by the <em>end effector</em> as it executes all possible motions. The shape of this volume depends on the robot geometry and the limits on the joints (for example a revolute joint might have less than 360 degree rotation). Its often broken down into 1. <strong>reachable workspace</strong> –&gt; Entire set of points we can physically reach 2. <strong>dextorous workspace</strong> –&gt; Subset of the workspace, where we can reach with arbitrary orientation</p>
+</section>
+<section id="classification-of-robots" class="level3">
+<h3 class="anchored" data-anchor-id="classification-of-robots">1.2.3 Classification of robots</h3>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    B[Power Source]
+    B --&gt; B1[Hydraulics\n e.g. Atlas]
+    B --&gt; B2[Electrical\n e.g. UR]
+    B --&gt; B3[Pnuematics] --- B3N[[Note: Air is compressible\nso not very precise,\n hence not popular]]
+</pre>
+</div>
+<p></p></figure><p></p>
 </div>
 </div>
+</div>
+<hr>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    C[Application area]
+
+    C --&gt; C1[Assembly]
+    C --&gt; C2[Non-Assembly]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<hr>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    D[Method of control]
+
+    D --&gt; D1[Servo]
+    D --&gt; D2[Non-Servo]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<hr>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    E[Geometry]
+
+    E --&gt; E1[Articulate RRR]
+    E --&gt; E2[spherical RRP]
+    E --&gt; E3[SCARA RRP]
+    E --&gt; E4[Cylindrical RPP]
+    E --&gt; E5[Cartesian PPP]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="common-kinematic-arrangements" class="level3">
+<h3 class="anchored" data-anchor-id="common-kinematic-arrangements">1.2.4 Common Kinematic Arrangements</h3>
+<section id="articulated-rrr" class="level4">
+<h4 class="anchored" data-anchor-id="articulated-rrr"><strong>Articulated RRR</strong></h4>
+<p><u>Elbow configuration</u></p>
+<div style="display: flex; gap: 20px; align-items: center;">
+<p><img src="../images/robot_geometries/ABB_RRR.png" alt="ABB RRR" width="45%"> <img src="../images/robot_geometries/elbow_manip_RRR.png" alt="Elbow Manipulator" width="45%"></p>
+</div>
+<p><u>Parallelogram configuration</u></p>
+<p><img src="../images/robot_geometries/RRR_parallel.png" width="45%"></p>
+</section>
+<section id="spherical-rrp" class="level4">
+<h4 class="anchored" data-anchor-id="spherical-rrp"><strong>Spherical RRP</strong></h4>
+<p><img src="../images/robot_geometries/RRP_spherical.png" width="45%"></p>
+</section>
+<section id="scara-rrp" class="level4">
+<h4 class="anchored" data-anchor-id="scara-rrp"><strong>SCARA RRP</strong></h4>
+<p><img src="../images/robot_geometries/RRP_SCARA.png" width="45%"></p>
+</section>
+<section id="cylindrical-rpp" class="level4">
+<h4 class="anchored" data-anchor-id="cylindrical-rpp"><strong>Cylindrical RPP</strong></h4>
+<p><img src="../images/robot_geometries/RPP_Cylindrical.png" width="45%"></p>
+</section>
+<section id="cartesian-ppp" class="level4">
+<h4 class="anchored" data-anchor-id="cartesian-ppp"><strong>Cartesian PPP</strong></h4>
+<p><img src="../images/robot_geometries/PPP_Cartesian.png" width="45%"></p>
+</section>
+</section>
+<section id="wrist-and-end-effectors" class="level3">
+<h3 class="anchored" data-anchor-id="wrist-and-end-effectors">1.2.4 Wrist and End effectors</h3>
+<p>So far we have discussed the different kinematic configurations of a robot, and what they are typically describing is a <strong>Robot ARM</strong>. For the robot to do anything meaningful we need an <strong>end effector / hand / EoAT (end of arm tooling)</strong>. Typically these EoATs are grippers, but also can be more complex depending on the need of the task. <mark>So a wrist then is anything that comes <em><strong>between</strong></em> the ARM and the EoAT</mark></p>
+<p>One interesting thing to note is that:</p>
+<ul>
+<li>The ARM is usally responsible for the positional degrees of freedom</li>
+<li>The WRIST typically deals with the orientational degrees of freedom</li>
+</ul>
+<p>Wrists are also typically spherical, by that I mean, the roll/pitch/yaw axes all intersect at the same point. Here’s a synbolic representation of a wrist</p>
+<p><img src="../images/robot_geometries/wrist.png" width="45%"></p>
 
 
 </section>
