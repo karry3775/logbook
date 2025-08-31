@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Logbook - Math Notes</title>
+<title>Logbook</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -101,35 +101,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -170,65 +141,145 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#calculus-notes" id="toc-calculus-notes" class="nav-link active" data-scroll-target="#calculus-notes">Calculus Notes</a>
-  <ul class="collapse">
-  <li><a href="#derivatives" id="toc-derivatives" class="nav-link" data-scroll-target="#derivatives">Derivatives</a></li>
-  </ul></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Math Notes</h1>
+
+
+
+<div id="ce9785fc" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pinocchio <span class="im">as</span> pin</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load model from urdf</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>urdf_path <span class="op">=</span> <span class="st">"sample.urdf"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> pin.buildModelFromUrdf(urdf_path)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> model.createData()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a random robot configuration</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> pin.randomConfiguration(model)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Random configuration q:</span><span class="ch">\n</span><span class="st">"</span>, q.T)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute forward kinemeatics for all frames</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>pin.framesForwardKinematics(model, data, q)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Access the end-effector placement</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>ee_frame_name <span class="op">=</span> model.frames[<span class="op">-</span><span class="dv">1</span>].name</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>frame_id <span class="op">=</span> model.getFrameId(ee_frame_name)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>ee_fk <span class="op">=</span> data.oMf[frame_id]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"ee SE(3):</span><span class="ch">\n</span><span class="st">"</span>, ee_fk)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"ee translation:</span><span class="ch">\n</span><span class="st">"</span>, ee_fk.translation)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"ee rotation SO(3):</span><span class="ch">\n</span><span class="st">"</span>, ee_fk.rotation)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Access and print all joint positions</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> joint_id, joint_name <span class="kw">in</span> <span class="bu">enumerate</span>(model.names):</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    position <span class="op">=</span> data.oMi[joint_id].translation</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    rotation  <span class="op">=</span> data.oMi[joint_id].rotation</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"joint_name:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>joint_name<span class="sc">}</span><span class="ss">, position:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>position<span class="sc">.</span>T<span class="sc">}</span><span class="ss">, rotation:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>rotation<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random configuration q:
+ [ 0.82605335  0.63939031 -0.92271389 -0.34254493 -0.26171002 -0.64227246
+  0.37477487 -0.80071987 -0.40757604  0.2718815  -1.08711455  0.97668538]
+ee SE(3):
+   R =
+ 0.711998  0.699638 0.0597093
+-0.578598  0.632741 -0.514648
+-0.397848  0.331881   0.85532
+  p =  0.447523 -0.488188 -0.251216
+
+ee translation:
+ [ 0.44752321 -0.48818838 -0.25121612]
+ee rotation SO(3):
+ [[ 0.71199815  0.69963807  0.05970935]
+ [-0.578598    0.63274144 -0.51464805]
+ [-0.39784795  0.33188075  0.85531993]]
+joint_name:
+ universe, position:
+ [0. 0. 0.], rotation:
+ [[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+joint_name:
+ l_shoulder_yaw, position:
+ [0.  0.2 0.2], rotation:
+ [[ 0.67778285 -0.73526214  0.        ]
+ [ 0.73526214  0.67778285  0.        ]
+ [ 0.          0.          1.        ]]
+joint_name:
+ l_shoulder_pitch, position:
+ [-0.07352621  0.26777828  0.2       ], rotation:
+ [[ 0.54389343 -0.73526214  0.40443729]
+ [ 0.59001824  0.67778285  0.43873555]
+ [-0.5967063   0.          0.80245972]]
+joint_name:
+ l_shoulder_roll, position:
+ [-0.14705243  0.33555657  0.2       ], rotation:
+ [[ 0.54389343 -0.76628215 -0.34204035]
+ [ 0.59001824  0.05937078  0.80520406]
+ [-0.5967063  -0.63975525  0.48441183]]
+joint_name:
+ l_elbow_pitch, position:
+ [-0.07864436  0.17451576  0.10311763], rotation:
+ [[ 0.3974085  -0.76628215 -0.50485458]
+ [ 0.82619608  0.05937078  0.56024562]
+ [-0.39933261 -0.63975525  0.65669376]]
+joint_name:
+ l_wrist_yaw, position:
+ [ 0.02232656  0.06246663 -0.02822112], rotation:
+ [[ 0.58213859 -0.63736686 -0.50485458]
+ [ 0.78270207  0.2711131   0.56024562]
+ [-0.2202093  -0.72129132  0.65669376]]
+joint_name:
+ l_wrist_pitch, position:
+ [ 0.12329748 -0.04958249 -0.15955987], rotation:
+ [[ 0.16372337 -0.63736686 -0.75296623]
+ [ 0.96233463  0.2711131  -0.02024239]
+ [ 0.21704084 -0.72129132  0.65774775]]
+joint_name:
+ r_shoulder_yaw, position:
+ [ 0.  -0.2  0.2], rotation:
+ [[ 0.93059006 -0.36606303  0.        ]
+ [ 0.36606303  0.93059006  0.        ]
+ [ 0.          0.          1.        ]]
+joint_name:
+ r_shoulder_pitch, position:
+ [ 0.0366063  -0.29305901  0.2       ], rotation:
+ [[ 0.64786761 -0.36606303 -0.668031  ]
+ [ 0.25484947  0.93059006 -0.26278107]
+ [ 0.71785745  0.          0.69619012]]
+joint_name:
+ r_shoulder_roll, position:
+ [ 0.07321261 -0.38611801  0.2       ], rotation:
+ [[ 0.64786761 -0.07127921 -0.75841073]
+ [ 0.25484947  0.95852266  0.12761684]
+ [ 0.71785745 -0.27595939  0.63916125]]
+joint_name:
+ r_elbow_pitch, position:
+ [ 0.22489475 -0.41164138  0.07216775], rotation:
+ [[ 0.82773658 -0.07127921 -0.55657113]
+ [ 0.2112174   0.95852266  0.1913675 ]
+ [ 0.51984552 -0.27595939  0.80845968]]
+joint_name:
+ r_wrist_yaw, position:
+ [ 0.33620898 -0.44991488 -0.08952419], rotation:
+ [[ 0.44803475  0.69963807 -0.55657113]
+ [-0.75034442  0.63274144  0.1913675 ]
+ [ 0.48605361  0.33188075  0.80845968]]
+joint_name:
+ r_wrist_pitch, position:
+ [ 0.44752321 -0.48818838 -0.25121612], rotation:
+ [[ 0.71199815  0.69963807  0.05970935]
+ [-0.578598    0.63274144 -0.51464805]
+ [-0.39784795  0.33188075  0.85531993]]</code></pre>
+</div>
 </div>
 
 
-
-<div class="quarto-title-meta column-page-left">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<section id="calculus-notes" class="level1">
-<h1>Calculus Notes</h1>
-<section id="derivatives" class="level2">
-<h2 class="anchored" data-anchor-id="derivatives">Derivatives</h2>
-<p>The derivative of a function (f(x)) is defined as:</p>
-<p><span class="math display">\[
-f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
-\]</span></p>
-<p>Example in Python using Sympy:</p>
-<div id="0a0de633" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> sp</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sympy <span class="im">import</span> init_printing</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>init_printing()  <span class="co"># pretty LaTeX-style output in HTML</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> sp.symbols(<span class="st">'x'</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">3</span><span class="op">*</span>x <span class="op">+</span> <span class="dv">2</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute derivative</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sp.diff(f, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-
-
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Logbook - Math Notes</title>
+<title>Logbook</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -101,35 +67,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -170,65 +107,82 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#calculus-notes" id="toc-calculus-notes" class="nav-link active" data-scroll-target="#calculus-notes">Calculus Notes</a>
-  <ul class="collapse">
-  <li><a href="#derivatives" id="toc-derivatives" class="nav-link" data-scroll-target="#derivatives">Derivatives</a></li>
-  </ul></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Math Notes</h1>
-</div>
+<main class="content column-page" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta column-page-left">
 
-    
-  
-    
-  </div>
-  
+<p><robot name="Fun_Robot"> <link name="base_footprint"> <joint name="base_joint" type="fixed"> <parent link="base_footprint"> <child link="base_link"> <origin xyz="0 0 0.5" rpy="0 0 0"> </origin></child></parent></joint> <link name="base_link"> <visual> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <box size="3.7939062066566853 2.2800234239081933 0.5232328098292442"> </box></geometry> <material name="base_link-material"> <color rgba="0.033104766565152086 0.46778379610254284 0.12477181755144427 1"> </color></material> </origin></visual> <collision> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <box size="3.7939062066566853 2.2800234239081933 0.5232328098292442"> </box></geometry> </origin></collision> <inertial> <origin xyz="0 0 0" rpy="0 0 0"> <mass value="1"> <inertia ixx="0.16666666666666666" ixy="0" ixz="0" iyy="0.16666666666666666" iyz="0" izz="0.16666666666666666"> </inertia></mass></origin></inertial>  <joint name="base_link_to_lidar" type="fixed"> <parent link="base_link"> <child link="lidar"> <origin xyz="0 0 0.2569669071788341" rpy="0 0 0"> </origin></child></parent></joint> <link name="lidar"> <visual> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <cylinder radius="0.333099402958804" length="0.13538975482266932"> </cylinder></geometry> <material name="lidar-material"> <color rgba="0 0 0 1"> </color></material> </origin></visual> <collision> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <cylinder radius="0.333099402958804" length="0.13538975482266932"> </cylinder></geometry> </origin></collision> <inertial> <origin xyz="0 0 0" rpy="0 0 0"> <mass value="1"> <inertia ixx="0.3333333333333333" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3333333333333333"> </inertia></mass></origin></inertial></robot></p>
+<pre><code>    &lt;sensor type="lidar" name="lidar"&gt;
+        &lt;always_on&gt;true&lt;/always_on&gt;
+        &lt;update_rate&gt;5&lt;/update_rate&gt;
+        &lt;origin&gt;0 0 0.2569669071788341 0 0 0&lt;/origin&gt;
+        &lt;ray&gt;
+            &lt;scan&gt;
+                &lt;horizontal&gt;
+                    &lt;samples&gt;360&lt;/samples&gt;
+                    &lt;resolution&gt;1&lt;/resolution&gt;
+                    &lt;min_angle&gt;0&lt;/min_angle&gt;
+                    &lt;max_angle&gt;6.28&lt;/max_angle&gt;
+                &lt;/horizontal&gt;
+                &lt;range&gt;
+                    &lt;min&gt;0.12&lt;/min&gt;
+                    &lt;max&gt;3.5&lt;/max&gt;
+                    &lt;resolution&gt;0.015&lt;/resolution&gt;
+                &lt;/range&gt;
+            &lt;/scan&gt;
+            &lt;noise&gt;
+                &lt;type&gt;gaussian&lt;/type&gt;
+                &lt;mean&gt;0&lt;/mean&gt;
+                &lt;stddev&gt;0.01&lt;/stddev&gt;
+            &lt;/noise&gt;
+        &lt;/ray&gt;
+    &lt;/sensor&gt;
+  &lt;/link&gt;</code></pre>
+<p><joint name="base_link_to_wheel_right" type="continuous"> <parent link="base_link"> <child link="wheel_right"> <origin xyz="1.39430638208543 1.1909017501403918 -0.2208471930668996" rpy="1.5707963267948963 0 0"> <axis xyz="0 0 1"> </axis></origin></child></parent></joint> <link name="wheel_right"> <visual> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <cylinder radius="0.2879384563584746" length="0.05383527298985801"> </cylinder></geometry> <material name="wheel_right-material"> <color rgba="0.6375968739867731 0.04373502925049377 0.008023192982520563 1"> </color></material> </origin></visual> <collision> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <cylinder radius="0.2879384563584746" length="0.05383527298985801"> </cylinder></geometry> </origin></collision> <inertial> <origin xyz="0 0 0" rpy="0 0 0"> <mass value="1"> <inertia ixx="0.3333333333333333" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3333333333333333"> </inertia></mass></origin></inertial>  <joint name="base_link_to_wheel_left" type="continuous"> <parent link="base_link"> <child link="wheel_left"> <origin xyz="1.39430638208543 -1.1736814480844906 -0.2208471930668996" rpy="1.5707963267948963 0 0"> <axis xyz="0 0 1"> </axis></origin></child></parent></joint> <link name="wheel_left"> <visual> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <cylinder radius="0.2879384563584746" length="0.05383527298985801"> </cylinder></geometry> <material name="wheel_left-material"> <color rgba="0.6375968739867731 0.04373502925049377 0.008023192982520563 1"> </color></material> </origin></visual> <collision> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <cylinder radius="0.2879384563584746" length="0.05383527298985801"> </cylinder></geometry> </origin></collision> <inertial> <origin xyz="0 0 0" rpy="0 0 0"> <mass value="1"> <inertia ixx="0.3333333333333333" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3333333333333333"> </inertia></mass></origin></inertial>  <joint name="base_link_to_omniwheel" type="fixed"> <parent link="base_link"> <child link="omniwheel"> <origin xyz="-1.3060831793408325 0 -0.3305897092162815" rpy="0 0 0"> </origin></child></parent></joint> <link name="omniwheel"> <visual> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <sphere radius="0.2"> </sphere></geometry> <material name="omniwheel-material"> <color rgba="0.14702726648767014 0.10461648408208657 0.4969329950515914 1"> </color></material> </origin></visual> <collision> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <sphere radius="0.2"> </sphere></geometry> </origin></collision> <inertial> <origin xyz="0 0 0" rpy="0 0 0"> <mass value="1"> <inertia ixx="0.4" ixy="0" ixz="0" iyy="0.4" iyz="0" izz="0.4"> </inertia></mass></origin></inertial>  <joint name="base_link_to_camera" type="fixed"> <parent link="base_link"> <child link="camera"> <origin xyz="1.6256258584357346 -0.02298885073006307 0.3695319117946291" rpy="0 0 0"> </origin></child></parent></joint> <link name="camera"> <visual> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <box size="0.1914947774659249 0.6346109922118176 0.19215263167384591"> </box></geometry> <material name="camera-material"> <color rgba="0.015996293361446288 0.22696587349938613 0.07036009568874305 1"> </color></material> </origin></visual> <collision> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <box size="0.1914947774659249 0.6346109922118176 0.19215263167384591"> </box></geometry> </origin></collision> <inertial> <origin xyz="0 0 0" rpy="0 0 0"> <mass value="1"> <inertia ixx="0.16666666666666666" ixy="0" ixz="0" iyy="0.16666666666666666" iyz="0" izz="0.16666666666666666"> </inertia></mass></origin></inertial></p>
+<pre><code>    &lt;sensor name="front_camera" type="camera"&gt;
+        &lt;always_on&gt;true&lt;/always_on&gt;
+        &lt;update_rate&gt;100&lt;/update_rate&gt;
+        &lt;origin&gt;1.6256258584357346 -0.02298885073006307 0.3695319117946291 0 0 0&lt;/origin&gt;
+        &lt;camera&gt;
+            &lt;horizontal_fov&gt;1.3962634&lt;/horizontal_fov&gt;
+            &lt;image&gt;
+                &lt;width&gt;800&lt;/width&gt;
+                &lt;height&gt;600&lt;/height&gt;
+                &lt;format&gt;R8G8B8&lt;/format&gt;
+            &lt;/image&gt;
+            &lt;clip&gt;
+                &lt;near&gt;0.1&lt;/near&gt;
+                &lt;far&gt;100&lt;/far&gt;
+            &lt;/clip&gt;
+            &lt;noise&gt;
+                &lt;type&gt;gaussian&lt;/type&gt;
+                &lt;mean&gt;0.01&lt;/mean&gt;
+            &lt;/noise&gt;
+        &lt;/camera&gt;
+    &lt;/sensor&gt;
+  &lt;/link&gt;</code></pre>
+<p><joint name="base_link_to_imu_sensor" type="fixed"> <parent link="base_link"> <child link="imu_sensor"> <origin xyz="-1.1282184172017464 0.06064584319013511 0.17904669409114127" rpy="0 0 0"> </origin></child></parent></joint> <link name="imu_sensor"> <visual> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <box size="0.46603382719539876 0.45619487184483365 0.3454197767248413"> </box></geometry> <material name="imu_sensor-material"> <color rgba="0.2874408377161099 0.9559733532482866 0.913098651791473 1"> </color></material> </origin></visual> <collision> <origin xyz="0 0 0" rpy="0 0 0"> <geometry> <box size="0.46603382719539876 0.45619487184483365 0.3454197767248413"> </box></geometry> </origin></collision> <inertial> <origin xyz="0 0 0" rpy="0 0 0"> <mass value="1"> <inertia ixx="0.16666666666666666" ixy="0" ixz="0" iyy="0.16666666666666666" iyz="0" izz="0.16666666666666666"> </inertia></mass></origin></inertial></p>
+<pre><code>    &lt;sensor type="imu" name="imu"&gt;
+        &lt;always_on&gt;true&lt;/always_on&gt;
+        &lt;update_rate&gt;100&lt;/update_rate&gt;
+        &lt;origin&gt;-1.1282184172017464 0.06064584319013511 0.17904669409114127 0 0 0&lt;/origin&gt;
+        &lt;imu&gt;
+            &lt;noise&gt;
+                &lt;type&gt;gaussian&lt;/type&gt;
+                &lt;mean&gt;0&lt;/mean&gt;
+                &lt;stddev&gt;0&lt;/stddev&gt;
+            &lt;/noise&gt;
+        &lt;/imu&gt;
+    &lt;/sensor&gt;
+  &lt;/link&gt;</code></pre>
+<p></p>
 
 
-</header>
-
-
-<section id="calculus-notes" class="level1">
-<h1>Calculus Notes</h1>
-<section id="derivatives" class="level2">
-<h2 class="anchored" data-anchor-id="derivatives">Derivatives</h2>
-<p>The derivative of a function (f(x)) is defined as:</p>
-<p><span class="math display">\[
-f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
-\]</span></p>
-<p>Example in Python using Sympy:</p>
-<div id="0a0de633" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> sp</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sympy <span class="im">import</span> init_printing</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>init_printing()  <span class="co"># pretty LaTeX-style output in HTML</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> sp.symbols(<span class="st">'x'</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">3</span><span class="op">*</span>x <span class="op">+</span> <span class="dv">2</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute derivative</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sp.diff(f, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-
-
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

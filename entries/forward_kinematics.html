@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Last updated: 2025-08-30">
+<meta name="description" content="Last updated: 2025-08-31">
 
 <title>Logbook - Forward kinematics for Robot Manipulators</title>
 <style>
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -146,8 +180,16 @@ window.Quarto = {
   <li><a href="#what-is-kinematics-forward-kinematics" id="toc-what-is-kinematics-forward-kinematics" class="nav-link" data-scroll-target="#what-is-kinematics-forward-kinematics">What is kinematics / forward kinematics ?</a></li>
   <li><a href="#transformation-conventions-for-serial-manipulators" id="toc-transformation-conventions-for-serial-manipulators" class="nav-link" data-scroll-target="#transformation-conventions-for-serial-manipulators">Transformation conventions for serial manipulators</a></li>
   <li><a href="#fk-using-dh-parameters-theoretical" id="toc-fk-using-dh-parameters-theoretical" class="nav-link" data-scroll-target="#fk-using-dh-parameters-theoretical">FK using DH parameters (Theoretical)</a></li>
-  <li><a href="#fk-from-urdf-practical" id="toc-fk-from-urdf-practical" class="nav-link" data-scroll-target="#fk-from-urdf-practical">FK from URDF (Practical)</a></li>
+  <li><a href="#fk-from-urdf-practical" id="toc-fk-from-urdf-practical" class="nav-link" data-scroll-target="#fk-from-urdf-practical">FK from URDF (Practical)</a>
+  <ul class="collapse">
+  <li><a href="#what-are-the-available-tools-to-obtain-fk-from-urdf" id="toc-what-are-the-available-tools-to-obtain-fk-from-urdf" class="nav-link" data-scroll-target="#what-are-the-available-tools-to-obtain-fk-from-urdf">What are the available tools to obtain FK from URDF ?</a>
+  <ul class="collapse">
+  <li><a href="#python-libraries" id="toc-python-libraries" class="nav-link" data-scroll-target="#python-libraries">Python Libraries</a></li>
+  <li><a href="#c-libraries" id="toc-c-libraries" class="nav-link" data-scroll-target="#c-libraries">C++ Libraries</a></li>
+  </ul></li>
+  </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#interesting-links-for-later" id="toc-interesting-links-for-later" class="nav-link" data-scroll-target="#interesting-links-for-later"><mark>Interesting links for later</mark>:</a></li>
   </ul>
 </nav>
     </div>
@@ -161,7 +203,7 @@ window.Quarto = {
 
 <div>
   <div class="description">
-    <strong><em>Last updated</em></strong>: 2025-08-30
+    <strong><em>Last updated</em></strong>: 2025-08-31
   </div>
 </div>
 
@@ -264,7 +306,7 @@ a_i &amp; \text{Link parameter} &amp; \text{Translation} &amp; \text{Distance al
 \hline
 \end{array}
 \]</span></p>
-<p>Once we have these the rotation matrix <span class="math inline">\(A_i\)</span> (or <span class="math inline">\(A_k\)</span> doesn’t matter) can be computed as follows:</p>
+<p>Once we have these four parameters, the rotation matrix <span class="math inline">\(A_i\)</span> (or <span class="math inline">\(A_k\)</span> doesn’t matter) can be computed as follows:</p>
 <p><span class="math display">\[
     A_i = Rot_{z,\theta} \cdot Trans_{z, d} \cdot Trans_{x, a} \cdot Rot_{x, \alpha}
 \]</span></p>
@@ -303,12 +345,111 @@ A_i =
 </section>
 <section id="fk-from-urdf-practical" class="level1">
 <h1>FK from URDF (Practical)</h1>
+<p>URDF stands for Universal Robot Description Format, developed by ROS (Robot operating system). Fundamentally its a XML file, with some special tags.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode xml code-with-copy"><code class="sourceCode xml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">&lt;?xml</span><span class="ot"> version=</span><span class="st">"1.0"</span><span class="fu">?&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">robot</span><span class="ot"> name=</span><span class="st">"two_link_manipulator"</span>&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">&lt;!-- Base link --&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">link</span><span class="ot"> name=</span><span class="st">"base_link"</span>&gt;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">visual</span>&gt;</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">geometry</span>&gt;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">box</span><span class="ot"> size=</span><span class="st">"0.2 0.2 0.05"</span>/&gt;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">geometry</span>&gt;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">origin</span><span class="ot"> xyz=</span><span class="st">"0 0 0"</span><span class="ot"> rpy=</span><span class="st">"0 0 0"</span>/&gt;</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">material</span><span class="ot"> name=</span><span class="st">"gray"</span>/&gt;</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">visual</span>&gt;</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">link</span>&gt;</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">&lt;!-- First link --&gt;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">link</span><span class="ot"> name=</span><span class="st">"link1"</span>&gt;</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">visual</span>&gt;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">geometry</span>&gt;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">cylinder</span><span class="ot"> length=</span><span class="st">"1.0"</span><span class="ot"> radius=</span><span class="st">"0.05"</span>/&gt;</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">geometry</span>&gt;</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">origin</span><span class="ot"> xyz=</span><span class="st">"0 0 0.5"</span><span class="ot"> rpy=</span><span class="st">"0 0 0"</span>/&gt;</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">material</span><span class="ot"> name=</span><span class="st">"blue"</span>/&gt;</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">visual</span>&gt;</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">link</span>&gt;</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">&lt;!-- Second link --&gt;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">link</span><span class="ot"> name=</span><span class="st">"link2"</span>&gt;</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">visual</span>&gt;</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">geometry</span>&gt;</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">cylinder</span><span class="ot"> length=</span><span class="st">"1.0"</span><span class="ot"> radius=</span><span class="st">"0.05"</span>/&gt;</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">geometry</span>&gt;</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">origin</span><span class="ot"> xyz=</span><span class="st">"0 0 0.5"</span><span class="ot"> rpy=</span><span class="st">"0 0 0"</span>/&gt;</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">material</span><span class="ot"> name=</span><span class="st">"green"</span>/&gt;</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">visual</span>&gt;</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">link</span>&gt;</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">&lt;!-- Joints --&gt;</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">joint</span><span class="ot"> name=</span><span class="st">"joint1"</span><span class="ot"> type=</span><span class="st">"revolute"</span>&gt;</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">parent</span><span class="ot"> link=</span><span class="st">"base_link"</span>/&gt;</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">child</span><span class="ot"> link=</span><span class="st">"link1"</span>/&gt;</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">origin</span><span class="ot"> xyz=</span><span class="st">"0 0 0.025"</span><span class="ot"> rpy=</span><span class="st">"0 0 0"</span>/&gt;</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">axis</span><span class="ot"> xyz=</span><span class="st">"0 0 1"</span>/&gt;</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">limit</span><span class="ot"> lower=</span><span class="st">"-3.1416"</span><span class="ot"> upper=</span><span class="st">"3.1416"</span><span class="ot"> effort=</span><span class="st">"10"</span><span class="ot"> velocity=</span><span class="st">"1"</span>/&gt;</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">joint</span>&gt;</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">joint</span><span class="ot"> name=</span><span class="st">"joint2"</span><span class="ot"> type=</span><span class="st">"revolute"</span>&gt;</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">parent</span><span class="ot"> link=</span><span class="st">"link1"</span>/&gt;</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">child</span><span class="ot"> link=</span><span class="st">"link2"</span>/&gt;</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">origin</span><span class="ot"> xyz=</span><span class="st">"0 0 1.0"</span><span class="ot"> rpy=</span><span class="st">"0 0 0"</span>/&gt;</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">axis</span><span class="ot"> xyz=</span><span class="st">"0 0 1"</span>/&gt;</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">limit</span><span class="ot"> lower=</span><span class="st">"-3.1416"</span><span class="ot"> upper=</span><span class="st">"3.1416"</span><span class="ot"> effort=</span><span class="st">"10"</span><span class="ot"> velocity=</span><span class="st">"1"</span>/&gt;</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">joint</span>&gt;</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">robot</span>&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For a more complete URDF see <a href="../entries/simple_robot.urdf.html">simple_robot.urdf</a>.</p>
+<p><img src="../images/urdfs/simple_robot.png" width="45%"></p>
+<p>Since creating URDFs is not the focus, we will skip that discussion. The problem we are trying to solve is, given a URDF how to obtain forward kinematics. And since there are plethora of tools that exist out there to help us with this task, we are not going to re-invent the wheel and rather do a bit of research into what exists out here</p>
+<section id="what-are-the-available-tools-to-obtain-fk-from-urdf" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-the-available-tools-to-obtain-fk-from-urdf">What are the available tools to obtain FK from URDF ?</h2>
+<p>Lets see what exists out there and then we start digging in: (Asked Google’s Gemini)</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This list is not exhaustive, but should expose us to a plenty of things that exists out there. and ultimately make our learning experience better.</p>
+</div>
+</div>
+<section id="python-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="python-libraries">Python Libraries</h3>
+<ol type="1">
+<li>pinnochio (Written in C++, has python bindings)</li>
+<li>pytorch-kinematics</li>
+<li>urdfpy</li>
+<li><mark>urdf2casadi</mark> [Winner 🎉]</li>
+</ol>
+</section>
+<section id="c-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="c-libraries">C++ Libraries</h3>
+<ol type="1">
+<li>Kinematics and Dynamics Library (KDL)</li>
+<li>MoveIt</li>
+<li>pinnochio</li>
+</ol>
+<p>For details on usability trade‑offs and Python APIs for forward kinematics, see: <a href="../entries/fk_in_python.html">FK in python</a> We will revisit performance trade-offs some other time, and thus also ignoring the C++ libraries</p>
+</section>
+</section>
 </section>
 <section id="references" class="level1">
 <h1>References</h1>
 <ul>
 <li>Chapter 3: Robotics Modeling and Control by Spong</li>
 <li><a href="https://www.youtube.com/watch?v=4WRhVqQaZTE">Robotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg)</a></li>
+</ul>
+</section>
+<section id="interesting-links-for-later" class="level1">
+<h1><mark>Interesting links for later</mark>:</h1>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=CwN0I8yUqok">Code Generation from Unified Robot Description Format (URDF) for Accelerated Robotics - Paul Gesel</a></li>
 </ul>
 
 
