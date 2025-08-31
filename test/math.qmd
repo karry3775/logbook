@@ -16,7 +16,7 @@ $$
 Example in Python using Sympy:
 
 ```{python}
-#| eval: true
+#| eval: false
 import sympy as sp
 from sympy import init_printing
 

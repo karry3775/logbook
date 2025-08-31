@@ -1,8 +1,12 @@
 
----
-title: "Daily Log: 2025-08-24"
-format: html
----
+
+### Date: 25-08-30
+
+- Revised chapter 1, and wrote detailed [notes](../entries/chapter_1_spong_notes.qmd)
+- Started writing notes for Forwardk kinematics [notes](../entries/forward_kinematics.qmd)
+    - Denavit–Hartenberg parameters took some time to understand, but in the end the realized that URDF to FK is probably more important.
+
+### Date: 25-08-24
 
 - Read through Chatper 1: Introduction to Robotics of "Robot Modelling and control" by Spong
 - Spent a bunch of time figuring out the correct format to log notes to github.

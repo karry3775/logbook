@@ -1,72 +1,72 @@
 [
   {
-    "objectID": "test/math.html",
-    "href": "test/math.html",
-    "title": "Math Notes",
+    "objectID": "logs/daily-logs.html",
+    "href": "logs/daily-logs.html",
+    "title": "Logbook",
     "section": "",
-    "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)\n\n\\(\\displaystyle 2 x + 3\\)"
+    "text": "Date: 25-08-30\n\nRevised chapter 1, and wrote detailed notes\nStarted writing notes for Forwardk kinematics notes\n\nDenavit–Hartenberg parameters took some time to understand, but in the end the realized that URDF to FK is probably more important.\n\n\n\n\nDate: 25-08-24\n\nRead through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong\nSpent a bunch of time figuring out the correct format to log notes to github.\nExperimented with Jekyll and Hugo, both of which sucked at rendering LaTex\nFinally after much experimentation Quarto seemed like a good option\nThis is a sample file using quarto’s math rendering link"
   },
   {
-    "objectID": "test/math.html#derivatives",
-    "href": "test/math.html#derivatives",
-    "title": "Math Notes",
+    "objectID": "entries/forward_kinematics.html",
+    "href": "entries/forward_kinematics.html",
+    "title": "Forward kinematics for Robot Manipulators",
     "section": "",
-    "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)\n\n\\(\\displaystyle 2 x + 3\\)"
+    "text": "Goals\n\nWhat is kinematics / forward kinematics ?\nHow to derive forward kinematics from URDF of any arbitrary robot ?\nWhat are DH-parameters and why do we use them ?\nHow to practically do forward kinematics for arbitrary robot kinematic chains\nWhat libraries exist out there ?\n\n\n\nWhat is kinematics / forward kinematics ?\nKinematics maps actuator space \\(\\to\\) task space; in other words, given actuator inputs, we can determine how the robot responds in its task space.It is important to note that kinematics encompasses not only position, but also velocity, acceleration, jerk, and higher-order derivatives. Essentially, any mapping from actuator variables to these quantities in task space falls under kinematics. Lets take a look at few robots, and explore how this looks:\n\nRobotic manipulator\n\nActuators: Joint motors (position / velocity / acceleration)\nTask space: End-effector state (position / velocity / acceleration)\n\nDifferential drive robot\n\nActuators: Wheel motors (velocity)\nTask space: Robot body frame (linear and angular velocity)\n\nQuadrotor\n\nActuators: Propeller motors (thrust)\nTask space: Robot body frame (linear and angular acceleration)\n\n\nLet’s take 2 link manipulator as a concrete example. Given, joint angles: \\(\\theta_1\\), \\(\\theta_2\\), where’s the end effector (\\(x\\), \\(y\\)) ?\n\nJoint position \\(\\to\\) End effector position \\[\\begin{align*}\n    x = l_1 \\cdot cos(\\theta_1) + l_2 \\cdot cos(\\theta_1 + \\theta_2) \\\\\n    y = l_1 \\cdot sin(\\theta_1) + l_2 \\cdot sin(\\theta_1 + \\theta_2)\n\\end{align*}\\]\nJoint velocities \\(\\to\\) End effector velocity \\[\\begin{align*}\n    x = -l_1 \\cdot sin(\\theta_1) \\cdot \\dot\\theta_1 - l_2 \\cdot sin(\\theta_1 + \\theta_2) \\cdot (\\dot\\theta_1 + \\dot\\theta_2) \\\\\n    y =  l_1 \\cdot cos(\\theta_1) \\cdot \\dot\\theta_1 + l_2 \\cdot cos(\\theta_1 + \\theta_2) \\cdot (\\dot\\theta_1 + \\dot\\theta_2)\n\\end{align*}\\]\naaand, we will skip the accelerations here, since you can probably tell its going to get out of hand pretty quickly.\nRegardless, with the above equations in place, one can pretty deterministically calculate the end effector state from the joint angles. This sort of analysis works well with low dof systems, but for more complicated systems, these are not so fun to derive. This is where we turn to transformation matrices, and encode everything in terms of matrix multiplications. This generalizes better.\nBefore we get further, first lets settle on some conventions that we are going to be using for the remainder of this text.\n\n\nTransformation conventions for serial manipulators\n\nWe have \\(n\\) joints, numbered \\(1 \\to n\\)\nWe have \\(n+1\\) links, numbered \\(0 \\to n\\), where link 0 is the base link (or the inertial link)\n\\(i\\) th joint connects link \\(i-1\\) and \\(i\\) \\(=&gt;\\) link_\\(i-1 \\to\\) joint_\\(i \\to\\) link_\\(i\\)\njoint_\\(i\\) controls the motion of immediate link_\\(i\\)\nWith the \\(i\\)th joint we associate a joint variable \\(q_i\\), which resolves to \\(\\theta_i\\) for revolute and \\(d_i\\) for prismatic joints respectively\nFor defining transformating matrices or relative measurments, we will be using this convention:\n\n\\(T_j^i\\) \\(\\to\\) Transformation of \\(j\\) (subscript) when expressed in frame \\(i\\)\n\n\nGiven this kinematics chain, if we need to write the transformation matrix \\((T_j^i)\\) from \\(i \\to j\\)\n\n\\[\\begin{align*}\n    T_j^i = A_{i+1} \\cdot A_{i+2} ... A_{j-1} \\cdot A{j} =  \\begin{bmatrix} R_j^i & p_j^i \\\\ 0 & 1 \\end{bmatrix}\n\\end{align*}\\]\nwhere, \\(A_k\\) is just the homogenous transformation matrix between links \\(k-1\\) and \\(k\\)\nand \\(A_k = A_k(q_k)\\) is a function of \\(k\\)th joint variable.\nOkay that’s well and good, but how do we obtain these individual \\(A_k\\) ? There are few options here:\n\nIf the manufacturer provides the DH (Denavit–Hartenberg) parameters, we can directly plug them in to compute the \\(A_k\\) matrices, which depend only on the joint variables. DH parameters systematically encode the robot’s link geometry.\nIf you are building a robot from scratch, or if DH parameters are not provided, you would need to carefully inspect the robot geometry to determine them.\nThe third option, which I prefer, is to use the URDF (Unified Robot Description Format). It already encodes the complete robot geometry and is the current standard for computing forward kinematics.\n\n\n\nFK using DH parameters (Theoretical)\nDH (a.k.a Denavit–Hartenberg) parameters is a collection of four parameters:\n\\[\n\\begin{array}{|c|c|c|p{6cm}|}\n\\hline\n\\text{Parameter} & \\text{Type} & \\text{Motion} & \\text{Meaning} \\\\\n\\hline\n\\theta_i & \\text{Joint parameter} & \\text{Rotation} & \\text{Angle we should rotate } Z_{i-1} \\text{ by so that } X_{i-1} \\parallel X_i \\\\\nd_i & \\text{Joint parameter} & \\text{Translation} & \\text{Distance along } Z_{i-1} \\text{ that would make origin of } i-1 \\text{ intersect with } X_i \\\\\na_i & \\text{Link parameter} & \\text{Translation} & \\text{Distance along } X_i \\text{ from } Z_{i-1} \\text{ to } Z_i \\\\\n\\alpha_i & \\text{Link parameter} & \\text{Rotation} & \\text{Angle to rotate around } X_i \\text{ to align } Z_{i-1} \\text{ with } Z_i \\\\\n\\hline\n\\end{array}\n\\]\nOnce we have these the rotation matrix \\(A_i\\) (or \\(A_k\\) doesn’t matter) can be computed as follows:\n\\[\n    A_i = Rot_{z,\\theta} \\cdot Trans_{z, d} \\cdot Trans_{x, a} \\cdot Rot_{x, \\alpha}\n\\]\nOR\n\\[\\begin{align*}\nA_i =\n\\begin{bmatrix}\n\\cos\\theta_i & -\\sin\\theta_i & 0 & 0 \\\\\n\\sin\\theta_i &  \\cos\\theta_i & 0 & 0 \\\\\n0            &  0             & 1 & 0 \\\\\n0            &  0             & 0 & 1\n\\end{bmatrix}\n\\cdot\n\\begin{bmatrix}\n1 & 0 & 0 & 0 \\\\\n0 & 1 & 0 & 0 \\\\\n0 & 0 & 1 & d_i \\\\\n0 & 0 & 0 & 1\n\\end{bmatrix}\n\\cdot\n\\begin{bmatrix}\n1 & 0 & 0 & a_i \\\\\n0 & 1 & 0 & 0 \\\\\n0 & 0 & 1 & 0 \\\\\n0 & 0 & 0 & 1\n\\end{bmatrix}\n\\cdot\n\\begin{bmatrix}\n1 & 0 & 0 & 0 \\\\\n0 & \\cos\\alpha_i & -\\sin\\alpha_i & 0 \\\\\n0 & \\sin\\alpha_i &  \\cos\\alpha_i & 0 \\\\\n0 & 0 & 0 & 1\n\\end{bmatrix}\n\\end{align*}\\]\nTo delve deeper this video / series is a great refresher: Robotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg)\n\n\nFK from URDF (Practical)\n\n\nReferences\n\nChapter 3: Robotics Modeling and Control by Spong\nRobotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Table of Contents",
+    "section": "",
+    "text": "Daily logs\n\n\n\n\nChapter 1: Robot Modelling and Control by Spong, notes\nForward Kinematics"
+  },
+  {
+    "objectID": "index.html#individual-entries",
+    "href": "index.html#individual-entries",
+    "title": "Table of Contents",
+    "section": "",
+    "text": "Chapter 1: Robot Modelling and Control by Spong, notes\nForward Kinematics"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site"
+    "text": "A place for documenting my robotics/software learning journey. Hop along!"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Logbook",
-    "section": "",
-    "text": "Logbook\n\n2025-08-24\n2025-08-30"
-  },
-  {
-    "objectID": "logs/2025-08-24.html",
-    "href": "logs/2025-08-24.html",
-    "title": "Daily Log: 2025-08-24",
-    "section": "",
-    "text": "Read through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong\nSpent a bunch of time figuring out the correct format to log notes to github.\nExperimented with Jekyll and Hugo, both of which sucked at rendering LaTex\nFinally after much experimentation Quarto seemed like a good option\nThis is a sample file using quarto’s math rendering link"
-  },
-  {
-    "objectID": "logs/2025-08-30.html",
-    "href": "logs/2025-08-30.html",
+    "objectID": "entries/chapter_1_spong_notes.html",
+    "href": "entries/chapter_1_spong_notes.html",
     "title": "Chapter 1: Robot Modeling and Control (spong)",
     "section": "",
     "text": "The very first robots (or so called non-servo robots) didn’t have any feedback in place. They were basically issued sequence of commands, .e.g. Move to point A, Close gripper, Move to point B, usually with hard mechanical stops or limit switches but there wasn’t any real feedback"
   },
   {
-    "objectID": "logs/2025-08-30.html#history",
-    "href": "logs/2025-08-30.html#history",
+    "objectID": "entries/chapter_1_spong_notes.html#history",
+    "href": "entries/chapter_1_spong_notes.html#history",
     "title": "Chapter 1: Robot Modeling and Control (spong)",
     "section": "",
     "text": "The very first robots (or so called non-servo robots) didn’t have any feedback in place. They were basically issued sequence of commands, .e.g. Move to point A, Close gripper, Move to point B, usually with hard mechanical stops or limit switches but there wasn’t any real feedback"
   },
   {
-    "objectID": "logs/2025-08-30.html#components-and-structure-of-robots",
-    "href": "logs/2025-08-30.html#components-and-structure-of-robots",
+    "objectID": "entries/chapter_1_spong_notes.html#components-and-structure-of-robots",
+    "href": "entries/chapter_1_spong_notes.html#components-and-structure-of-robots",
     "title": "Chapter 1: Robot Modeling and Control (spong)",
     "section": "1.2 Components and Structure of robots",
     "text": "1.2 Components and Structure of robots\n\n1.2.1 Symbolic representation of robots\nBasically robots are kinematic chains, which are made up of links and joints. These joints can be revolute (R), or prismatic (P). The axis of rotation, or axis of translation is denoted by z\n\n\n1.2.2 Degrees of freedom and workspace\nDegrees of freedom\nSo actually, when we talk about degrees of freedom for a kinematic mechanism, (think four bar linkage) the degrees of freedom doesn’t directly equate to the number of joints, and is given by the Gruebler’s formula,\n\\[\nF = 3 (n - 1) - 2L - H\n\\]\nwhere:\n\n\\(F\\) = number of degrees of freedom\n\n\\(n\\) = total number of links including the fixed base\n\n\\(L\\) = total number of lower pairs (1 DOF such as pins and sliding joints)\n\n\\(H\\) = total number of higher pairs (2 DOF such as cam and gear joints)\n\nYou can refer here for more details: source\nHaving said that, for a lot of the industrial manipulators, they are designed in a way that the joints are mostly independent of each other and thus number of degrees of freedom == number of joints. For a robot to reach 3D space with arbitrary orientation, it must have atleast 6DOFs i.e. 3 for position and 3 for orientation. If a robot has more than 6 DOF, then its called a kinematically redundant chain – which is especially useful if we have to avoid obstacles.\nWorkspace\nOkay, with that out of the way, lets talk of workspace. So by definition, its the total volume swept by the end effector as it executes all possible motions. The shape of this volume depends on the robot geometry and the limits on the joints (for example a revolute joint might have less than 360 degree rotation). Its often broken down into 1. reachable workspace –&gt; Entire set of points we can physically reach 2. dextorous workspace –&gt; Subset of the workspace, where we can reach with arbitrary orientation\n\n\n1.2.3 Classification of robots\n\n\n\n\n\nflowchart LR\n    B[Power Source]\n    B --&gt; B1[Hydraulics\\n e.g. Atlas]\n    B --&gt; B2[Electrical\\n e.g. UR]\n    B --&gt; B3[Pnuematics] --- B3N[[Note: Air is compressible\\nso not very precise,\\n hence not popular]]\n\n\n\n\n\n\n\n\n\n\n\n\nflowchart LR\n    C[Application area]\n\n    C --&gt; C1[Assembly]\n    C --&gt; C2[Non-Assembly]\n\n\n\n\n\n\n\n\n\n\n\n\nflowchart LR\n    D[Method of control]\n\n    D --&gt; D1[Servo]\n    D --&gt; D2[Non-Servo]\n\n\n\n\n\n\n\n\n\n\n\n\nflowchart LR\n    E[Geometry]\n\n    E --&gt; E1[Articulate RRR]\n    E --&gt; E2[spherical RRP]\n    E --&gt; E3[SCARA RRP]\n    E --&gt; E4[Cylindrical RPP]\n    E --&gt; E5[Cartesian PPP]\n\n\n\n\n\n\n\n\n1.2.4 Common Kinematic Arrangements\n\nArticulated RRR\nElbow configuration\n\n \n\nParallelogram configuration\n\n\n\nSpherical RRP\n\n\n\nSCARA RRP\n\n\n\nCylindrical RPP\n\n\n\nCartesian PPP\n\n\n\n\n1.2.4 Wrist and End effectors\nSo far we have discussed the different kinematic configurations of a robot, and what they are typically describing is a Robot ARM. For the robot to do anything meaningful we need an end effector / hand / EoAT (end of arm tooling). Typically these EoATs are grippers, but also can be more complex depending on the need of the task. So a wrist then is anything that comes between the ARM and the EoAT\nOne interesting thing to note is that:\n\nThe ARM is usally responsible for the positional degrees of freedom\nThe WRIST typically deals with the orientational degrees of freedom\n\nWrists are also typically spherical, by that I mean, the roll/pitch/yaw axes all intersect at the same point. Here’s a synbolic representation of a wrist"
   },
   {
-    "objectID": "logs/2025-08-30.html#common-kinematic-arrangements",
-    "href": "logs/2025-08-30.html#common-kinematic-arrangements",
-    "title": "Chapter 1: Robot Modeling and Control (spong)",
-    "section": "1.3.4 Common Kinematic Arrangements",
-    "text": "1.3.4 Common Kinematic Arrangements"
+    "objectID": "test/math.html",
+    "href": "test/math.html",
+    "title": "Math Notes",
+    "section": "",
+    "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)"
   },
   {
-    "objectID": "logs/2025-08-30.html#outline-of-the-text",
-    "href": "logs/2025-08-30.html#outline-of-the-text",
-    "title": "Chapter 1: Robot Modeling and Control (spong)",
-    "section": "1.3 Outline of the text",
-    "text": "1.3 Outline of the text\nNow that we understand the components of the robot, i.e.:\n\nHow to represent it symbolically\nWHat is an ARM, WRIST, EoAT\nWhat are different kinematic configurations etc\n\nHow do we start doing something meaningful with our Robot.\nLets motivate that with a problem. Support we have surface we want to grind with our robot. and lets assume that our robot is equipped with an EoAT that’s capable of grinding."
+    "objectID": "test/math.html#derivatives",
+    "href": "test/math.html#derivatives",
+    "title": "Math Notes",
+    "section": "",
+    "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)"
   }
 ]

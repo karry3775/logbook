@@ -1,0 +1,151 @@
+---
+title: "Forward kinematics for Robot Manipulators"
+description: "***Last updated***: 2025-08-30"
+format: html
+---
+
+# Goals
+- What is kinematics / forward kinematics ?
+- How to derive forward kinematics from URDF of any arbitrary robot ?
+- What are DH-parameters and why do we use them ?
+- How to practically do forward kinematics for arbitrary robot kinematic chains
+- What libraries exist out there ?
+
+# What is kinematics / forward kinematics ?
+
+Kinematics maps [***actuator space*** $\to$ ***task space***]{.mark}; in other words, *given actuator inputs, 
+we can determine how the robot responds in its task space*.It is important to note that kinematics encompasses not only **position**, but also **velocity**, **acceleration**, **jerk**, and higher-order derivatives.
+Essentially, any mapping from actuator variables to these quantities in task space falls under kinematics. Lets take a look at few robots, and explore how this looks:
+
+
+- **Robotic manipulator**
+    - Actuators: Joint motors (position / velocity / acceleration)
+    - Task space: End-effector state (position / velocity / acceleration)
+
+- **Differential drive robot**
+    - Actuators: Wheel motors (velocity)
+    - Task space: Robot body frame (linear and angular velocity)
+
+- **Quadrotor**
+    - Actuators: Propeller motors (thrust)
+    - Task space: Robot body frame (linear and angular acceleration)
+
+
+[Let's take 2 link manipulator as a concrete example. Given, joint angles: $\theta_1$, $\theta_2$, where's the end effector ($x$, $y$) ?]{.mark}
+
+<img src="../images/fk/2_link_manip.png" width="45%">
+
+Joint position $\to$ End effector position
+\begin{align*}
+    x = l_1 \cdot cos(\theta_1) + l_2 \cdot cos(\theta_1 + \theta_2) \\
+    y = l_1 \cdot sin(\theta_1) + l_2 \cdot sin(\theta_1 + \theta_2) 
+\end{align*}
+
+Joint velocities $\to$ End effector velocity
+\begin{align*}
+    x = -l_1 \cdot sin(\theta_1) \cdot \dot\theta_1 - l_2 \cdot sin(\theta_1 + \theta_2) \cdot (\dot\theta_1 + \dot\theta_2) \\
+    y =  l_1 \cdot cos(\theta_1) \cdot \dot\theta_1 + l_2 \cdot cos(\theta_1 + \theta_2) \cdot (\dot\theta_1 + \dot\theta_2)
+\end{align*}
+
+_aaand_, we will skip the accelerations here, since you can probably tell its going to get out of hand pretty quickly.
+
+Regardless, with the above equations in place, one can pretty deterministically calculate the end effector state from the joint angles.
+This sort of analysis works well with low dof systems, but for more complicated systems, these are not so fun to derive. This is where we turn to
+transformation matrices, and encode everything in terms of matrix multiplications. This generalizes better.
+
+Before we get further, first lets settle on some conventions that we are going to be using for the remainder of this text.
+
+# Transformation conventions for serial manipulators
+
+
+- We have $n$ joints, numbered $1 \to n$
+- We have $n+1$ links, numbered $0 \to n$, where link 0 is the base link (or the inertial link)
+- $i$ th joint connects link $i-1$ and $i$ $=>$  **link_$i-1 \to$ [joint_$i \to$]{.mark} link_$i$**
+- joint_$i$ controls the motion of immediate link_$i$
+- With the $i$th joint we associate a joint variable $q_i$, which resolves to $\theta_i$ for revolute and $d_i$ for prismatic joints respectively
+- For defining transformating matrices or relative measurments, we will be using this convention:
+    - [$T_j^i$ $\to$ Transformation of $j$ (subscript) when expressed in frame $i$]{.mark}
+
+Given this kinematics chain, if we need to write the transformation matrix $(T_j^i)$ from $i \to j$
+
+<img src="../images/fk/kinematic_chain_example_1.png" width="45%">
+
+\begin{align*}
+    T_j^i = A_{i+1} \cdot A_{i+2} ... A_{j-1} \cdot A{j} =  \begin{bmatrix} R_j^i & p_j^i \\ 0 & 1 \end{bmatrix}
+\end{align*}
+
+where, $A_k$ is just the homogenous transformation matrix between links $k-1$ and $k$
+
+and $A_k = A_k(q_k)$ is a function of $k$th joint variable.
+
+Okay that's well and good, but how do we obtain these individual $A_k$ ? There are few options here:
+
+- If the manufacturer provides the DH (Denavit–Hartenberg) parameters, we can directly plug them in to compute the $A_k$ matrices, which depend only on the joint variables. DH parameters systematically encode the robot’s link geometry.
+- If you are building a robot from scratch, or if DH parameters are not provided, you would need to carefully inspect the robot geometry to determine them.
+- The third option, which I prefer, is to use the URDF (Unified Robot Description Format). It already encodes the complete robot geometry and is the current standard for computing forward kinematics.
+
+# FK using DH parameters (Theoretical)
+
+DH (a.k.a Denavit–Hartenberg) parameters is a collection of four parameters:
+
+$$
+\begin{array}{|c|c|c|p{6cm}|}
+\hline
+\text{Parameter} & \text{Type} & \text{Motion} & \text{Meaning} \\
+\hline
+\theta_i & \text{Joint parameter} & \text{Rotation} & \text{Angle we should rotate } Z_{i-1} \text{ by so that } X_{i-1} \parallel X_i \\
+d_i & \text{Joint parameter} & \text{Translation} & \text{Distance along } Z_{i-1} \text{ that would make origin of } i-1 \text{ intersect with } X_i \\
+a_i & \text{Link parameter} & \text{Translation} & \text{Distance along } X_i \text{ from } Z_{i-1} \text{ to } Z_i \\
+\alpha_i & \text{Link parameter} & \text{Rotation} & \text{Angle to rotate around } X_i \text{ to align } Z_{i-1} \text{ with } Z_i \\
+\hline
+\end{array}
+$$
+
+Once we have these the rotation matrix $A_i$ (or $A_k$ doesn't matter) can be computed as follows:
+
+$$
+    A_i = Rot_{z,\theta} \cdot Trans_{z, d} \cdot Trans_{x, a} \cdot Rot_{x, \alpha} 
+$$
+
+OR
+
+\begin{align*}
+A_i =
+\begin{bmatrix}
+\cos\theta_i & -\sin\theta_i & 0 & 0 \\
+\sin\theta_i &  \cos\theta_i & 0 & 0 \\
+0            &  0             & 1 & 0 \\
+0            &  0             & 0 & 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & d_i \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 & 0 & 0 & a_i \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & \cos\alpha_i & -\sin\alpha_i & 0 \\
+0 & \sin\alpha_i &  \cos\alpha_i & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\end{align*}
+
+
+To delve deeper this video / series is a great refresher: [Robotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg) ](https://www.youtube.com/watch?v=4WRhVqQaZTE)
+
+# FK from URDF (Practical)
+
+
+# References
+- Chapter 3: Robotics Modeling and Control by Spong
+- [Robotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg) ](https://www.youtube.com/watch?v=4WRhVqQaZTE)

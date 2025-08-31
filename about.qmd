@@ -2,4 +2,4 @@
 title: "About"
 ---
 
-About this site
+A place for documenting my robotics/software learning journey. Hop along!

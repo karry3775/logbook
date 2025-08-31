@@ -3,3 +3,8 @@ body .container {
     padding: 1rem;  /* optional: give a little padding */
 }
 
+body .mark {
+  background-color: #fff9c4 !important; /* mellow yellow */
+  padding: 0.1em 0.2em;     /* optional: nicer look */
+  border-radius: 0.2em;     /* optional: softer corners */
+}

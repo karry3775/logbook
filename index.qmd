@@ -1,4 +1,7 @@
-# Logbook
+# Table of Contents
 
-- [2025-08-24](logs/2025-08-24.html)
-- [2025-08-30](logs/2025-08-30.html)
+- [Daily logs](logs/daily-logs.qmd)
+
+## Individual entries
+- [Chapter 1: Robot Modelling and Control by Spong, notes](entries/chapter_1_spong_notes.qmd)
+- [Forward Kinematics](entries/forward_kinematics.qmd)
