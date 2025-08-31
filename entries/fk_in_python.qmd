@@ -1,0 +1,237 @@
+---
+title: "Forward kinematics from URDF in python"
+description: "***Last updated***: 2025-08-31"
+format: html
+---
+
+Parent document: [Forward kinematics](forward_kinematics.qmd)
+
+
+# Verdict
+
+[We will roll forward with urdf2casadi! 🎉]{.mark}
+
+1. **Pinocchio**  Potentially very fast and widely regarded, but the API feels cumbersome with too many indirections. 
+    Getting it running did help me set up conda, but the learning curve and complexity don’t feel worth it right now, especially since we want to move quickly.
+2. **pytorch_kinematics** The API is solid and intuitive, but its key advantage is efficient batching, which we don’t currently need. Without that use case, it’s not as compelling at the moment.
+3. **urdf2py** I really liked the simplicity and clarity of this API. Unfortunately, visualization was broken, and fixing it required downgrading NumPy, which didn’t work out. These compatibility issues make it less reliable for now.
+4. **urdf2casadi** Clean and user‑friendly interface, plus the added benefit of symbolic computation, which could be very useful down the line for optimization or analytical derivatives. This strikes the best balance of usability and flexibility, so it’s the top contender.
+
+
+# FK using urdfpy
+
+Source: [https://urdfpy.readthedocs.io/en/latest/examples/index.html](https://urdfpy.readthedocs.io/en/latest/examples/index.html)
+
+## Installation
+
+```
+$ conda create -n urdfpy_env python=3.9
+$ conda activate urdfpy_env
+$ conda install -c conda-forge ipykernel urdfpy
+$ conda install numpy=1.26 # Downgrade numpy if you want to visualize
+```
+
+## Code snippet
+
+This is the cleanest interface i have seen so far!
+
+```{python}
+#|eval: false
+from urdfpy import URDF
+import os
+
+os.environ["PYOPENGL_PLATFORM"] = "egl"  # or "osmesa" for CPU-only
+
+urdf_file = "sample.urdf"
+robot = URDF.load(urdf_file)
+
+# Print links
+for link in robot.links:
+    # print(link.name)
+    pass
+
+# Print joints
+for joint in robot.joints:
+    # print(joint.name)
+    pass
+
+# Access actuated joints (ignoring the fixed joints)
+for joint in robot.actuated_joints:
+    print(joint.name)
+    pass
+
+# Doing forward kinematics
+fk = robot.link_fk()
+fk[robot.links[2]]
+print(fk)
+```
+
+# FK using urdf2casadi
+
+Even this was nice, and Edward Morgan wrote it, so good vibes all around!
+
+Source library: [https://github.com/mahaarbo/urdf2casadi](https://github.com/mahaarbo/urdf2casadi)
+
+## Installation
+
+```
+$ conda create -n urdf2casadi_env python=3.9
+$ conda activate urdf2casadi_env
+$ conda install -c conda-forge ipykernel urdf2casadi
+```
+
+## Code snippet
+
+```{python}
+#|eval: false
+import casadi as cs
+from urdf2casadi import urdfparser as u2c
+import numpy as np
+
+urdf_path = "sample.urdf"
+robot_parser = u2c.URDFparser()
+robot_parser.from_file(urdf_path)
+
+# We can control which subchain we want from here
+root="root"
+tip="r_wrist2"
+
+fk_dict = robot_parser.get_forward_kinematics(root, tip)
+fk = fk_dict["T_fk"]
+
+print(fk)
+# should print: T_fk:(i0[6])->(o0[4x4]) SXFunction
+# which means input is 6 vector, and output is a 4x4 matrix
+q = np.zeros(6)
+fk(q)
+"""
+DM(
+[[1, 0, 0, 0], 
+ [0, 1, 0, -0.4], 
+ [0, 0, 1, -0.4], 
+ [0, 0, 0, 1]])
+"""
+```
+
+
+
+# pytorch_kinematics
+
+Source library: [https://github.com/UM-ARM-Lab/pytorch_kinematics](https://github.com/UM-ARM-Lab/pytorch_kinematics)
+
+## Installation
+
+```
+# Doing it in conda saves so much headache later on, since
+# pinnochio for e.g. only works in python=3.9
+
+$ conda create -n pytorch_kin_env python=3.11
+$ conda activate pytorch_kin_env
+$ conda install -c conda-forge ipykernel
+$ pip install pytorch_kinematics
+```
+
+## Code snippet
+```{python}
+#| eval: false
+import pytorch_kinematics as pk
+import math
+import torch
+
+
+# Loading robots
+urdf = "sample.urdf"
+chain = pk.build_chain_from_urdf(open(urdf, mode="rb").read())
+
+chain.print_tree()
+"""
+root
+├── l_shoulder1
+│   └── l_shoulder2
+│       └── l_shoulder3
+│           └── l_elbow1
+│               └── l_wrist1
+│                   └── l_wrist2
+└── r_shoulder1
+    └── r_shoulder2
+        └── r_shoulder3
+            └── r_elbow1
+                └── r_wrist1
+                    └── r_wrist2
+"""
+
+## FK
+
+# Extract a sepcifical searial chain
+serial_chain = pk.SerialChain(chain, "l_wrist2", "l_elbow1")
+serial_chain.print_tree()
+"""
+l_elbow1
+└── l_wrist1
+    └── l_wrist2
+"""
+# Generate random joint variables
+batch_size=1
+q_random = torch.rand(batch_size, len(chain.get_joint_parameter_names()))
+print(q_random)
+
+ret = chain.forward_kinematics(q_random)
+print(ret) # Contains transformation rot, pos
+
+
+# Print a specific joint
+transform = ret['l_shoulder1'] # From the base, since that was the chain
+# Get it as a matrix
+m = transform.get_matrix()
+# Extract position and rotation
+pos = m[:,:3, 3]
+# Extract quaternion
+rot = pk.matrix_to_quaternion(m[:, :3, :3])
+
+```
+
+# FK using pinocchio
+
+## Installation
+
+```
+$ conda create -n pin_env python=3.9 # Note 3.9 is very important here
+$ conda activate pin_env
+$ conda install -c conda-forge ipykernel pinocchio
+```
+
+## Code snippet
+
+
+```{python}
+#| eval: false
+import pinocchio as pin
+import os
+
+# Load model from urdf
+urdf_path = "sample.urdf"
+model = pin.buildModelFromUrdf(urdf_path)
+data = model.createData()
+
+# Define a random robot configuration
+q = pin.randomConfiguration(model)
+print("Random configuration q:\n", q.T)
+
+# Compute forward kinemeatics for all frames
+pin.framesForwardKinematics(model, data, q)
+
+# Access the end-effector placement
+ee_frame_name = model.frames[-1].name
+frame_id = model.getFrameId(ee_frame_name)
+ee_fk = data.oMf[frame_id]
+
+print("ee SE(3):\n", ee_fk)
+print("ee translation:\n", ee_fk.translation)
+print("ee rotation SO(3):\n", ee_fk.rotation)
+
+# Access and print all joint positions
+for joint_id, joint_name in enumerate(model.names):
+    position = data.oMi[joint_id].translation
+    rotation  = data.oMi[joint_id].rotation
+    print(f"joint_name:\n {joint_name}, position:\n {position.T}, rotation:\n {rotation}")
+```

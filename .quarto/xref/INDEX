@@ -28,5 +28,44 @@
   },
   "entries/forward_kinematics.qmd": {
     "forward_kinematics.html": "18737f4f"
+  },
+  "example_urdfs/simple_robot.urdf.qmd": {
+    "simple_robot.urdf.html": "751b9182"
+  },
+  "entries/simple_robot.urdf.qmd": {
+    "simple_robot.urdf.html": "5f79bd9b"
+  },
+  "entries/fk_using_pinnochio.qmd": {
+    "fk_using_pinnochio.html": "a6235da8"
+  },
+  "notebooks/fk_using_pinnochio.ipynb": {
+    "fk_using_pinnochio.html": "325cdc49"
+  },
+  "entries/conda_basics.qmd": {
+    "conda_basics.html": "c9936651"
+  },
+  "notebooks/fk_using_pytorch_kinematics.ipynb": {
+    "fk_using_pytorch_kinematics.html": "7a6b8217"
+  },
+  "entries/fk_using_pytorch_kinematics.qmd": {
+    "fk_using_pytorch_kinematics.html": "536a30c0"
+  },
+  "scripts/fk_using_pinnochio.ipynb": {
+    "fk_using_pinnochio.html": "704e5a1f"
+  },
+  "scripts/fk_using_pytorch_kinematics.ipynb": {
+    "fk_using_pytorch_kinematics.html": "f7002c39"
+  },
+  "scripts/fk_using_urdfpy.ipynb": {
+    "fk_using_urdfpy.html": "1231a947"
+  },
+  "entries/fk_using_urdfpy.qmd": {
+    "fk_using_urdfpy.html": "17e9cd0e"
+  },
+  "entries/fk_in_python.qmd": {
+    "fk_in_python.html": "21310166"
+  },
+  "scripts/fk_using_urdf2casadi.ipynb": {
+    "fk_using_urdf2casadi.html": "9cbc07a4"
   }
 }

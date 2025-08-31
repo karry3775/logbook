@@ -1,7 +1,7 @@
-# Table of Contents
-
+## Contents
 - [Daily logs](logs/daily-logs.qmd)
-
-## Individual entries
 - [Chapter 1: Robot Modelling and Control by Spong, notes](entries/chapter_1_spong_notes.qmd)
-- [Forward Kinematics](entries/forward_kinematics.qmd)
+- [Conda basics](entries/conda_basics.qmd)
+- Forward kinematics
+    - [Forward Kinematics](entries/forward_kinematics.qmd)
+    - [FK in python](entries/fk_in_python.qmd)

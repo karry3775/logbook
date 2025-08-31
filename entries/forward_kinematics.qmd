@@ -1,6 +1,6 @@
 ---
 title: "Forward kinematics for Robot Manipulators"
-description: "***Last updated***: 2025-08-30"
+description: "***Last updated***: 2025-08-31"
 format: html
 ---
 
@@ -101,7 +101,7 @@ a_i & \text{Link parameter} & \text{Translation} & \text{Distance along } X_i \t
 \end{array}
 $$
 
-Once we have these the rotation matrix $A_i$ (or $A_k$ doesn't matter) can be computed as follows:
+Once we have these four parameters, the rotation matrix $A_i$ (or $A_k$ doesn't matter) can be computed as follows:
 
 $$
     A_i = Rot_{z,\theta} \cdot Trans_{z, d} \cdot Trans_{x, a} \cdot Rot_{x, \alpha} 
@@ -145,7 +145,103 @@ To delve deeper this video / series is a great refresher: [Robotics 1 U1 (Kinema
 
 # FK from URDF (Practical)
 
+URDF stands for Universal Robot Description Format, developed by ROS (Robot operating system). Fundamentally its a XML file, with some special tags.
+
+```xml
+<?xml version="1.0"?>
+<robot name="two_link_manipulator">
+
+  <!-- Base link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.2 0.2 0.05"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <material name="gray"/>
+    </visual>
+  </link>
+
+  <!-- First link -->
+  <link name="link1">
+    <visual>
+      <geometry>
+        <cylinder length="1.0" radius="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <!-- Second link -->
+  <link name="link2">
+    <visual>
+      <geometry>
+        <cylinder length="1.0" radius="0.05"/>
+      </geometry>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <material name="green"/>
+    </visual>
+  </link>
+
+  <!-- Joints -->
+  <joint name="joint1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0.025" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.1416" upper="3.1416" effort="10" velocity="1"/>
+  </joint>
+
+  <joint name="joint2" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 0 1.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.1416" upper="3.1416" effort="10" velocity="1"/>
+  </joint>
+
+</robot>
+```
+
+For a more complete URDF see [simple_robot.urdf](simple_robot.urdf.qmd).
+
+
+<img src="../images/urdfs/simple_robot.png" width="45%"/>
+
+Since creating URDFs is not the focus, we will skip that discussion.
+The problem we are trying to solve is, given a URDF how to obtain forward kinematics. And since there are plethora of tools that exist 
+out there to help us with this task, 
+we are not going to re-invent the wheel and rather do a bit of research into what exists out here
+
+## What are the available tools to obtain FK from URDF ?
+
+Lets see what exists out there and then we start digging in:
+(Asked Google's Gemini)
+
+::: {.callout-note}
+This list is not exhaustive, but should expose us to a plenty of things that exists out there.
+and ultimately make our learning experience better.
+:::
+
+### Python Libraries
+1. pinnochio (Written in C++, has python bindings)
+2. pytorch-kinematics
+3. urdfpy
+4. [urdf2casadi]{.mark} [Winner 🎉]
+
+### C++ Libraries
+1. Kinematics and Dynamics Library (KDL)
+2. MoveIt
+3. pinnochio
+
+For details on usability trade‑offs and Python APIs for forward kinematics, see: [FK in python](fk_in_python.qmd)
+We will revisit performance trade-offs some other time, and thus also ignoring the C++ libraries
 
 # References
 - Chapter 3: Robotics Modeling and Control by Spong
 - [Robotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg) ](https://www.youtube.com/watch?v=4WRhVqQaZTE)
+
+# [Interesting links for later]{.mark}:
+
+-  [Code Generation from Unified Robot Description Format (URDF) for Accelerated Robotics - Paul Gesel](https://www.youtube.com/watch?v=CwN0I8yUqok)

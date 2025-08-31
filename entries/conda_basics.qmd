@@ -1,0 +1,38 @@
+---
+title: "Conda basics"
+description: "***Last updated***: 2025-08-31"
+format: html
+---
+
+```
+// Creating a conda environment
+$ conda create -n myenv python=3.9 # whatever python version
+
+// List environment
+$ conda list env
+
+# conda environments:
+#
+base                   /home/kartik/anaconda3
+myenv                * /home/kartik/anaconda3/envs/myenv
+pinnochio_env          /home/kartik/anaconda3/envs/pinnochio_env
+
+// Deactivating environments
+$ conda deactivate
+
+// Removing environments
+$ conda remove -n myenv --all
+
+// Installing a package, we will try and install the following packages:
+// pinnochio, notebook, ipykernel, hpp-fcl
+$ conda install -c conda-forge pinochio notebook ipykernel hpp-fcl
+
+// Register ipykernel inside the environment so that we can find it 
+// inside notebooks in vscode
+$ python -m ipykernel install --user --name=pinocchio_env --display-name 'Python pinocchio_dev'
+
+// 
+
+
+
+```
