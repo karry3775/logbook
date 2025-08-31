@@ -1,4 +1,9 @@
 
+### Date: 25-08-30
+- Looked deeply in URDFs and their structure, came across URDF creator tool which seemed promising.
+- Compared various FK python libraries (urdfpy, urdf2casadi, pytorch_kinematics, pinnochio). See [fk_in_python](../entries/fk_in_python.qmd)
+- Refreshed conda basics, and practiced creating new environments over and over gain. As a refresher see this [conda_basics](../entries/conda_basics.qmd)
+
 
 ### Date: 25-08-30
 
