@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Last updated: 2025-08-30">
 
-<title>Logbook - Daily Log: 2025-08-24</title>
+<title>Logbook - Forward kinematics for Robot Manipulators</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,6 +68,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -107,20 +137,36 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#goals" id="toc-goals" class="nav-link active" data-scroll-target="#goals">Goals</a></li>
+  <li><a href="#what-is-kinematics-forward-kinematics" id="toc-what-is-kinematics-forward-kinematics" class="nav-link" data-scroll-target="#what-is-kinematics-forward-kinematics">What is kinematics / forward kinematics ?</a></li>
+  <li><a href="#transformation-conventions-for-serial-manipulators" id="toc-transformation-conventions-for-serial-manipulators" class="nav-link" data-scroll-target="#transformation-conventions-for-serial-manipulators">Transformation conventions for serial manipulators</a></li>
+  <li><a href="#fk-using-dh-parameters-theoretical" id="toc-fk-using-dh-parameters-theoretical" class="nav-link" data-scroll-target="#fk-using-dh-parameters-theoretical">FK using DH parameters (Theoretical)</a></li>
+  <li><a href="#fk-from-urdf-practical" id="toc-fk-from-urdf-practical" class="nav-link" data-scroll-target="#fk-from-urdf-practical">FK from URDF (Practical)</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Daily Log: 2025-08-24</h1>
+<h1 class="title">Forward kinematics for Robot Manipulators</h1>
+</div>
+
+<div>
+  <div class="description">
+    <strong><em>Last updated</em></strong>: 2025-08-30
+  </div>
 </div>
 
 
-
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -132,15 +178,141 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="goals" class="level1">
+<h1>Goals</h1>
 <ul>
-<li>Read through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong</li>
-<li>Spent a bunch of time figuring out the correct format to log notes to github.</li>
-<li>Experimented with Jekyll and Hugo, both of which sucked at rendering LaTex</li>
-<li>Finally after much experimentation Quarto seemed like a good option</li>
-<li>This is a sample file using quarto’s math rendering <a href="../test/math.html">link</a></li>
+<li>What is kinematics / forward kinematics ?</li>
+<li>How to derive forward kinematics from URDF of any arbitrary robot ?</li>
+<li>What are DH-parameters and why do we use them ?</li>
+<li>How to practically do forward kinematics for arbitrary robot kinematic chains</li>
+<li>What libraries exist out there ?</li>
+</ul>
+</section>
+<section id="what-is-kinematics-forward-kinematics" class="level1">
+<h1>What is kinematics / forward kinematics ?</h1>
+<p>Kinematics maps <mark><strong><em>actuator space</em></strong> <span class="math inline">\(\to\)</span> <strong><em>task space</em></strong></mark>; in other words, <em>given actuator inputs, we can determine how the robot responds in its task space</em>.It is important to note that kinematics encompasses not only <strong>position</strong>, but also <strong>velocity</strong>, <strong>acceleration</strong>, <strong>jerk</strong>, and higher-order derivatives. Essentially, any mapping from actuator variables to these quantities in task space falls under kinematics. Lets take a look at few robots, and explore how this looks:</p>
+<ul>
+<li><strong>Robotic manipulator</strong>
+<ul>
+<li>Actuators: Joint motors (position / velocity / acceleration)</li>
+<li>Task space: End-effector state (position / velocity / acceleration)</li>
+</ul></li>
+<li><strong>Differential drive robot</strong>
+<ul>
+<li>Actuators: Wheel motors (velocity)</li>
+<li>Task space: Robot body frame (linear and angular velocity)</li>
+</ul></li>
+<li><strong>Quadrotor</strong>
+<ul>
+<li>Actuators: Propeller motors (thrust)</li>
+<li>Task space: Robot body frame (linear and angular acceleration)</li>
+</ul></li>
+</ul>
+<p><mark>Let’s take 2 link manipulator as a concrete example. Given, joint angles: <span class="math inline">\(\theta_1\)</span>, <span class="math inline">\(\theta_2\)</span>, where’s the end effector (<span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>) ?</mark></p>
+<p><img src="../images/fk/2_link_manip.png" width="45%"></p>
+<p>Joint position <span class="math inline">\(\to\)</span> End effector position <span class="math display">\[\begin{align*}
+    x = l_1 \cdot cos(\theta_1) + l_2 \cdot cos(\theta_1 + \theta_2) \\
+    y = l_1 \cdot sin(\theta_1) + l_2 \cdot sin(\theta_1 + \theta_2)
+\end{align*}\]</span></p>
+<p>Joint velocities <span class="math inline">\(\to\)</span> End effector velocity <span class="math display">\[\begin{align*}
+    x = -l_1 \cdot sin(\theta_1) \cdot \dot\theta_1 - l_2 \cdot sin(\theta_1 + \theta_2) \cdot (\dot\theta_1 + \dot\theta_2) \\
+    y =  l_1 \cdot cos(\theta_1) \cdot \dot\theta_1 + l_2 \cdot cos(\theta_1 + \theta_2) \cdot (\dot\theta_1 + \dot\theta_2)
+\end{align*}\]</span></p>
+<p><em>aaand</em>, we will skip the accelerations here, since you can probably tell its going to get out of hand pretty quickly.</p>
+<p>Regardless, with the above equations in place, one can pretty deterministically calculate the end effector state from the joint angles. This sort of analysis works well with low dof systems, but for more complicated systems, these are not so fun to derive. This is where we turn to transformation matrices, and encode everything in terms of matrix multiplications. This generalizes better.</p>
+<p>Before we get further, first lets settle on some conventions that we are going to be using for the remainder of this text.</p>
+</section>
+<section id="transformation-conventions-for-serial-manipulators" class="level1">
+<h1>Transformation conventions for serial manipulators</h1>
+<ul>
+<li>We have <span class="math inline">\(n\)</span> joints, numbered <span class="math inline">\(1 \to n\)</span></li>
+<li>We have <span class="math inline">\(n+1\)</span> links, numbered <span class="math inline">\(0 \to n\)</span>, where link 0 is the base link (or the inertial link)</li>
+<li><span class="math inline">\(i\)</span> th joint connects link <span class="math inline">\(i-1\)</span> and <span class="math inline">\(i\)</span> <span class="math inline">\(=&gt;\)</span> <strong>link_<span class="math inline">\(i-1 \to\)</span> <mark>joint_<span class="math inline">\(i \to\)</span></mark> link_<span class="math inline">\(i\)</span></strong></li>
+<li>joint_<span class="math inline">\(i\)</span> controls the motion of immediate link_<span class="math inline">\(i\)</span></li>
+<li>With the <span class="math inline">\(i\)</span>th joint we associate a joint variable <span class="math inline">\(q_i\)</span>, which resolves to <span class="math inline">\(\theta_i\)</span> for revolute and <span class="math inline">\(d_i\)</span> for prismatic joints respectively</li>
+<li>For defining transformating matrices or relative measurments, we will be using this convention:
+<ul>
+<li><mark><span class="math inline">\(T_j^i\)</span> <span class="math inline">\(\to\)</span> Transformation of <span class="math inline">\(j\)</span> (subscript) when expressed in frame <span class="math inline">\(i\)</span></mark></li>
+</ul></li>
+</ul>
+<p>Given this kinematics chain, if we need to write the transformation matrix <span class="math inline">\((T_j^i)\)</span> from <span class="math inline">\(i \to j\)</span></p>
+<p><img src="../images/fk/kinematic_chain_example_1.png" width="45%"></p>
+<p><span class="math display">\[\begin{align*}
+    T_j^i = A_{i+1} \cdot A_{i+2} ... A_{j-1} \cdot A{j} =  \begin{bmatrix} R_j^i &amp; p_j^i \\ 0 &amp; 1 \end{bmatrix}
+\end{align*}\]</span></p>
+<p>where, <span class="math inline">\(A_k\)</span> is just the homogenous transformation matrix between links <span class="math inline">\(k-1\)</span> and <span class="math inline">\(k\)</span></p>
+<p>and <span class="math inline">\(A_k = A_k(q_k)\)</span> is a function of <span class="math inline">\(k\)</span>th joint variable.</p>
+<p>Okay that’s well and good, but how do we obtain these individual <span class="math inline">\(A_k\)</span> ? There are few options here:</p>
+<ul>
+<li>If the manufacturer provides the DH (Denavit–Hartenberg) parameters, we can directly plug them in to compute the <span class="math inline">\(A_k\)</span> matrices, which depend only on the joint variables. DH parameters systematically encode the robot’s link geometry.</li>
+<li>If you are building a robot from scratch, or if DH parameters are not provided, you would need to carefully inspect the robot geometry to determine them.</li>
+<li>The third option, which I prefer, is to use the URDF (Unified Robot Description Format). It already encodes the complete robot geometry and is the current standard for computing forward kinematics.</li>
+</ul>
+</section>
+<section id="fk-using-dh-parameters-theoretical" class="level1">
+<h1>FK using DH parameters (Theoretical)</h1>
+<p>DH (a.k.a Denavit–Hartenberg) parameters is a collection of four parameters:</p>
+<p><span class="math display">\[
+\begin{array}{|c|c|c|p{6cm}|}
+\hline
+\text{Parameter} &amp; \text{Type} &amp; \text{Motion} &amp; \text{Meaning} \\
+\hline
+\theta_i &amp; \text{Joint parameter} &amp; \text{Rotation} &amp; \text{Angle we should rotate } Z_{i-1} \text{ by so that } X_{i-1} \parallel X_i \\
+d_i &amp; \text{Joint parameter} &amp; \text{Translation} &amp; \text{Distance along } Z_{i-1} \text{ that would make origin of } i-1 \text{ intersect with } X_i \\
+a_i &amp; \text{Link parameter} &amp; \text{Translation} &amp; \text{Distance along } X_i \text{ from } Z_{i-1} \text{ to } Z_i \\
+\alpha_i &amp; \text{Link parameter} &amp; \text{Rotation} &amp; \text{Angle to rotate around } X_i \text{ to align } Z_{i-1} \text{ with } Z_i \\
+\hline
+\end{array}
+\]</span></p>
+<p>Once we have these the rotation matrix <span class="math inline">\(A_i\)</span> (or <span class="math inline">\(A_k\)</span> doesn’t matter) can be computed as follows:</p>
+<p><span class="math display">\[
+    A_i = Rot_{z,\theta} \cdot Trans_{z, d} \cdot Trans_{x, a} \cdot Rot_{x, \alpha}
+\]</span></p>
+<p>OR</p>
+<p><span class="math display">\[\begin{align*}
+A_i =
+\begin{bmatrix}
+\cos\theta_i &amp; -\sin\theta_i &amp; 0 &amp; 0 \\
+\sin\theta_i &amp;  \cos\theta_i &amp; 0 &amp; 0 \\
+0            &amp;  0             &amp; 1 &amp; 0 \\
+0            &amp;  0             &amp; 0 &amp; 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; d_i \\
+0 &amp; 0 &amp; 0 &amp; 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; a_i \\
+0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; \cos\alpha_i &amp; -\sin\alpha_i &amp; 0 \\
+0 &amp; \sin\alpha_i &amp;  \cos\alpha_i &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1
+\end{bmatrix}
+\end{align*}\]</span></p>
+<p>To delve deeper this video / series is a great refresher: <a href="https://www.youtube.com/watch?v=4WRhVqQaZTE">Robotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg)</a></p>
+</section>
+<section id="fk-from-urdf-practical" class="level1">
+<h1>FK from URDF (Practical)</h1>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ul>
+<li>Chapter 3: Robotics Modeling and Control by Spong</li>
+<li><a href="https://www.youtube.com/watch?v=4WRhVqQaZTE">Robotics 1 U1 (Kinematics) S5 (HTM) P2 (HTM by Denavit Hartenberg)</a></li>
 </ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
