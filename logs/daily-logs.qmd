@@ -1,17 +1,17 @@
 
-### Date: 25-08-31
+### Date: 2025-08-31
 - Looked deeply in URDFs and their structure, came across URDF creator tool which seemed promising.
 - Compared various FK python libraries (urdfpy, urdf2casadi, pytorch_kinematics, pinnochio). See [fk_in_python](../entries/fk_in_python.qmd)
 - Refreshed conda basics, and practiced creating new environments over and over gain. As a refresher see this [conda_basics](../entries/conda_basics.qmd)
 
 
-### Date: 25-08-30
+### Date: 2025-08-30
 
 - Revised chapter 1, and wrote detailed [notes](../entries/chapter_1_spong_notes.qmd)
 - Started writing notes for Forwardk kinematics [notes](../entries/forward_kinematics.qmd)
     - Denavit–Hartenberg parameters took some time to understand, but in the end the realized that URDF to FK is probably more important.
 
-### Date: 25-08-24
+### Date: 2025-08-24
 
 - Read through Chatper 1: Introduction to Robotics of "Robot Modelling and control" by Spong
 - Spent a bunch of time figuring out the correct format to log notes to github.

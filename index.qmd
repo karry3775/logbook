@@ -5,3 +5,4 @@
 - Forward kinematics
     - [Forward Kinematics](entries/forward_kinematics.qmd)
     - [FK in python](entries/fk_in_python.qmd)
+- [Bit manipulation in 8-bit registers](entries/bit_manipulation_in_8_bit_registers.qmd)

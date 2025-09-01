@@ -1,0 +1,184 @@
+---
+title: "Bit manipulation in 8 bit registers"
+description: "***Last updated***: 2025-09-1"
+format: html
+---
+
+Context: Since bit manipulation can be broad. We will explore bit manipulation in the context of a 8-bit register
+
+# Representing bits
+
+We begin by defining individual bits, Here's a table showing both
+the decimal and hex values for each bit in the register.
+
+\begin{array}{|l|l|l|}
+\hline
+\text{BIT number} & \text{Decimal} & \text{Hex} \\
+\hline
+\text{BIT 0} & 1 & \text{0x01} \\
+\text{BIT 1} & 2 & \text{0x02} \\
+\text{BIT 2} & 4 & \text{0x04} \\
+\text{BIT 3} & 8 & \text{0x08} \\
+\text{BIT 4} & 16 & \text{0x10} \\
+\text{BIT 5} & 32 & \text{0x20} \\
+\text{BIT 6} & 64 & \text{0x40} \\
+\text{BIT 7} & 128 & \text{0x80} \\
+\hline
+\end{array}
+
+```cpp
+#define BIT0 0x01;
+#define BIT1 0x02;
+#define BIT2 0x04;
+#define BIT3 0x08;
+#define BIT4 0x10;
+#define BIT5 0x20;
+#define BIT6 0x40;
+#define BIT7 0x80;
+```
+
+# Reading and Writing from a register:
+
+Bitwise operators `&`, `|`, `~` can help us implement read/write operations in registers. As to where this might be useful,here are some scenarios:
+
+\begin{array}{|l|l|p{5cm}|}
+\hline
+\text{No.} & \text{Scenario} & \text{Code} \\
+\hline
+\text{1} &  \text{Check LED is ON/OFF} & \text{REGISTER \& BIT0}\\
+\text{2} & \text{Turn LED ON} & \text{REGISTER |= BIT0}\\
+\text{3} & \text{Turn LED OFF} & \text{REGISTER \&= \(\sim\)BIT0}\\
+\hline
+\end{array}
+
+Here's how to interpret this table
+
+1. `0` means LED OFF, `1` means LED ON.
+2. `REGISTER |= BIT0` sets this particular bit to 1, while keeping the rest untouched.
+3. `REGISTER &= ~BIT0`, we first complement `BIT0`, e.g. `0001` becomes `1110` and then `&` operation basically turns off that bit in the register, 
+    while keeping the rest untouched. 
+
+Here's the full code showing more examples
+
+```cpp
+// Reading from a register
+uint8_t MY_REGISTER; // 8 bit register
+uint8_t bit_0_value = MY_REGISTER & BIT0; // read the value of BIT0
+uint8_t bit_01_value = MY_REGISTER & (BIT0 | BIT1); // read value of both BIT0 and BIT1
+
+//
+// Writing to the register
+
+// Writing 1 to a register
+MY_REGISTER = BIT0; // BAD; We don't want to replace the register's value, This statement wipes everything off and only set BIT0 to 1
+MY_REGISTER |= BIT0; // GOOD: We should use | Setting BIT0 in the register to 1, 
+// Writing 0 to a register
+MY_REGISTER &= ~BIT0; // We complement the BIT0, so every bit except BIT0 is 1, and then we & which basically ends up setting BIT0 to 0
+// Again we can compose multiple bits
+MY_REGISTER &= ~(BIT0 | BIT1 | BIT2);
+```
+
+# Toggling bits
+
+Lets take our LED example again. and you want to write a `toggle_LED` function. One way to achieve this is by writing a function that:
+
+1. Reads the current LED state.
+2. If its ON, does `REGSITER &= ~BIT0` to turn it OFF.
+3. If its OFF, does `REGISTER |= BIT0` to turn it ON.
+
+...this is a lot of code. `XOR` to the rescue, we can achieve this toggling effect by just doing this
+
+```cpp
+void toggle_LED() {
+    MY_REGISTER ^= BIT0 ; // that's it
+}
+```
+
+*Wait whaattt, what is going on?*. 
+
+Lets look at the truth table of `XOR` to demystify this:
+
+\begin{array}{|l|l|l|}
+\hline
+\text{Input} & \text{Operator} & \text{Output} \\
+\hline
+\text{0} & \text{0} & \text{0} \\
+\text{1} & \text{0} & \text{1} \\
+\textcolor{blue}{\text{0}} & \textcolor{blue}{\text{1}} & \textcolor{blue}{\text{1}} \\
+\textcolor{blue}{\text{1}} & \textcolor{blue}{\text{1}} & \textcolor{blue}{\text{0}} \\
+\hline
+\end{array}
+
+I rearranged the truth table a bit, so that it becomes obvious on what's going on. If we notice, whenever the operator
+is `0` input just passes through unchanged, while if the operator is `1` we flip the bit. This is what we use to our advantage.
+
+When we `XOR` a register with specific bit such as `BIT0`, all we are saying is hey all the other bits that are `0` should pass through
+while the `BIT0`, which is `1` should be flipped, and voila we have our one-liner toggle_LED
+
+# Bit shifting
+
+There are multiple things we would want to use bit-shifting for
+
+## I want to define bits
+
+Earlier we defined bits by writing the hex values, but we can do that pretty easily with shifting
+```cpp
+#define BIT0 (0x01)
+#define BIT1 (BIT0 << 1)
+#define BIT2 (BIT0 << 2)
+#define BIT3 (BIT0 << 3)
+#define BIT4 (BIT0 << 4)
+#define BIT5 (BIT0 << 5)
+#define BIT6 (BIT0 << 6)
+#define BIT7 (BIT0 << 7)
+
+// OR
+
+#define BIT0 (0x01)
+#define BIT1 (BIT0 << 1)
+#define BIT2 (BIT1 << 1)
+#define BIT3 (BIT2 << 1)
+#define BIT4 (BIT3 << 1)
+#define BIT5 (BIT4 << 1)
+#define BIT6 (BIT5 << 1)
+#define BIT7 (BIT6 << 1)
+```
+
+## I want to store multiple things in the same register
+
+1. A 3-bit `MODE` section in bits 5-7
+2. A 5-bit `VALUE` section in bits 0-4
+
+```cpp
+Bits:  7   6   5   4   3   2   1   0
+Field: M   M   M   V   V   V   V   V
+```
+
+Now say i know that i want to store value `3` for `MODE`, and a value of `4` for value
+```cpp
+#define MODE_SHIFT 5 // starts at 5
+#define VALUE_SHIFT 0 // starts at 0
+unit8_t reg = 0;
+
+// Instead of thinking about the raw value which woud be 3 << 5 = 96, 
+// we can think in relative terms.
+reg |= (3 << MODE_SHIFT); // Store a value of 3 for MODE
+reg |= (4 << VALUE_SHIFT); // Store a value of 4 for VALUE
+```
+
+## I want to read what's in `MODE`
+
+```cpp
+unit8_t mode = reg >> MODE_SHIFT; 
+```
+
+## Fast mult and division
+
+```cpp
+int x = 10;
+// Multiply by 2^5
+printf("%d", x << 5); // multiplies by 2^5, prints 320
+// Divide by 2
+printf("%d", x >> 1); // divides by 2, printfs 5
+```
+

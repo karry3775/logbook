@@ -67,5 +67,8 @@
   },
   "scripts/fk_using_urdf2casadi.ipynb": {
     "fk_using_urdf2casadi.html": "9cbc07a4"
+  },
+  "entries/bit_manipulation_in_8_bit_registers.qmd": {
+    "bit_manipulation_in_8_bit_registers.html": "a19c40d3"
   }
 }

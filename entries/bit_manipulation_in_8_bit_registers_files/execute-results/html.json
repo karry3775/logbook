@@ -1,0 +1,12 @@
+{
+  "hash": "d73784ddbce356d5df826d2de3a9451b",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Bit manipulation in 8 bit registers\"\ndescription: \"***Last updated***: 2025-09-1\"\nformat: html\n---\n\nContext: Since bit manipulation can be broad. We will explore bit manipulation in the context of a 8-bit register\n\n# Defining bits in a 8-bit register\n\nWe begin by defining individual bits, Here's a table showing both\nthe decimal and hex values for each bit in the register.\n\n\\begin{array}{|l|l|l|}\n\\hline\n\\text{BIT number} & \\text{Decimal} & \\text{Hex} \\\\\n\\hline\n\\text{BIT 0} & 1 & \\text{0x01} \\\\\n\\text{BIT 1} & 2 & \\text{0x02} \\\\\n\\text{BIT 2} & 4 & \\text{0x04} \\\\\n\\text{BIT 3} & 8 & \\text{0x08} \\\\\n\\text{BIT 4} & 16 & \\text{0x10} \\\\\n\\text{BIT 5} & 32 & \\text{0x20} \\\\\n\\text{BIT 6} & 64 & \\text{0x40} \\\\\n\\text{BIT 7} & 128 & \\text{0x80} \\\\\n\\hline\n\\end{array}\n\n```cpp\n#| eval: false\n\n#include <stdint.h>\n\nuint8_t BIT0 = 0x01;\nuint8_t BIT1 = 0x02;\nuint8_t BIT2 = 0x04;\nuint8_t BIT3 = 0x08;\nuint8_t BIT4 = 0x10;\nuint8_t BIT5 = 0x20;\nuint8_t BIT6 = 0x40;\nuint8_t BIT7 = 0x80;\n```\n\n# Reading from a register\n\nBit manipulation allows us to read an individual value from a give register,\n\n\n```{c}\n#| eval: false\n\n```\n\n",
+    "supporting": [
+      "bit_manipulation_in_8_bit_registers_files/figure-html"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
