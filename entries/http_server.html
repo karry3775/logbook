@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Last updated: 2025-09-01">
 
-<title>Logbook</title>
+<title>Logbook - Implementing HTTP Server in C</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,22 +24,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,7 +69,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -78,7 +79,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Logbook</span>
     </a>
   </div>
@@ -89,11 +90,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -112,29 +113,98 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#contents" id="toc-contents" class="nav-link active" data-scroll-target="#contents">Contents</a></li>
+  <li><a href="#research-notes" id="toc-research-notes" class="nav-link active" data-scroll-target="#research-notes">Research Notes</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Implementing HTTP Server in C</h1>
+</div>
+
+<div>
+  <div class="description">
+    <strong><em>Last updated</em></strong>: 2025-09-01
+  </div>
+</div>
 
 
+<div class="quarto-title-meta column-page-left">
 
-<section id="contents" class="level2">
-<h2 class="anchored" data-anchor-id="contents">Contents</h2>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="research-notes" class="level1">
+<h1>Research Notes</h1>
 <ul>
-<li><a href="./logs/daily-logs.html">Daily logs</a></li>
-<li><a href="./entries/chapter_1_spong_notes.html">Chapter 1: Robot Modelling and Control by Spong, notes</a></li>
-<li><a href="./entries/conda_basics.html">Conda basics</a></li>
-<li>Forward kinematics
+<li>Context: HTTP is the language of the web. The internet can be thought of as a giant client-server system, and HTTP is how we define the format and transmission of messages that client/server exchanges</li>
+<li>Basic functionality:
 <ul>
-<li><a href="./entries/forward_kinematics.html">Forward Kinematics</a></li>
-<li><a href="./entries/fk_in_python.html">FK in python</a></li>
+<li>You type an URL on your browser say https://www.google.com</li>
+<li>Your browser sends an <strong>HTTP request</strong> to the server.</li>
+<li>The server processes the request, and sends back the <strong>HTTP response</strong> int this case the HTML page for google.com
+<ul>
+<li>Browser -&gt; HTTP Request -&gt; Server</li>
+<li>Server -&gt; HTTP Response –&gt; Browser</li>
 </ul></li>
-<li><a href="./entries/bit_manipulation_in_8_bit_registers.html">Bit manipulation in 8-bit registers</a></li>
-<li><a href="./entries/http_server.html">Building a HTTP server in C</a></li>
+</ul></li>
+<li>History:
+<ul>
+<li>HTTP/1.1, HTTP/2, HTTP/3, HTTPS</li>
+</ul></li>
+<li>HTTP Status codes:
+<ul>
+<li>1xx informational</li>
+<li>2xx Success
+<ul>
+<li>200 OK</li>
+</ul></li>
+<li>3xx redirection</li>
+<li>4xx client error
+<ul>
+<li>404 (Not found)</li>
+</ul></li>
+<li>5xx Server error</li>
+</ul></li>
+<li>Strutucture of the Request:
+<ul>
+<li>Start line: GET /background.png HTTP/1.0 ^ Method ^ Target ^ Version</li>
+<li>Headers: User-Agent: Mozzilla/5.0</li>
+<li>Body: None for GET</li>
+</ul></li>
+<li>Structure of the Response:
+<ul>
+<li>Start line: HTTP/1.1 404 Not found ^ Version ^ Status Code ^ Status text</li>
+<li>Headers: Content-Type: Image/png</li>
+<li>Body: The file/resource requested</li>
+</ul></li>
+<li>Some other notes:
+<ul>
+<li>HTTP 1.0 is stateless</li>
+<li>Based on TCP/IP – Lets explore more on this</li>
+<li>3 parts to the request/response messages</li>
+</ul></li>
+</ul>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview">https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview</a></li>
+<li><a href="https://www.youtube.com/watch?v=wW2A5SZ3GkI">What is HTTP? How the Internet Works! #1</a></li>
+<li><a href="https://www.submarinecablemap.com/">Submarine cables – Connecting continents</a></li>
+<li><a href="https://www.youtube.com/watch?v=0TLDTodL7Lc">Transport Layer Security (TLS) - Computerphile</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P">Free CCNA Course by Network chuck</a></li>
 </ul>
 
 

@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://karry3775.github.io/logbook/logs/daily-logs.html</loc>
-    <lastmod>2025-09-01T18:59:34.795Z</lastmod>
+    <lastmod>2025-09-02T03:05:31.924Z</lastmod>
   </url>
   <url>
     <loc>https://karry3775.github.io/logbook/entries/bit_manipulation_in_8_bit_registers.html</loc>
@@ -13,40 +13,44 @@
     <lastmod>2025-08-31T21:36:45.634Z</lastmod>
   </url>
   <url>
-    <loc>https://karry3775.github.io/logbook/entries/fk_in_python.html</loc>
-    <lastmod>2025-08-31T23:23:01.298Z</lastmod>
-  </url>
-  <url>
-    <loc>https://karry3775.github.io/logbook/index.html</loc>
-    <lastmod>2025-09-01T19:04:34.092Z</lastmod>
-  </url>
-  <url>
-    <loc>https://karry3775.github.io/logbook/scripts/fk_using_urdfpy.html</loc>
-    <lastmod>2025-08-31T22:51:38.448Z</lastmod>
-  </url>
-  <url>
-    <loc>https://karry3775.github.io/logbook/scripts/fk_using_pinnochio.html</loc>
-    <lastmod>2025-08-31T22:03:39.953Z</lastmod>
-  </url>
-  <url>
-    <loc>https://karry3775.github.io/logbook/about.html</loc>
-    <lastmod>2025-08-30T22:59:54.280Z</lastmod>
-  </url>
-  <url>
-    <loc>https://karry3775.github.io/logbook/scripts/fk_using_pytorch_kinematics.html</loc>
-    <lastmod>2025-08-31T22:26:31.517Z</lastmod>
-  </url>
-  <url>
-    <loc>https://karry3775.github.io/logbook/scripts/fk_using_urdf2casadi.html</loc>
-    <lastmod>2025-08-31T23:12:33.328Z</lastmod>
+    <loc>https://karry3775.github.io/logbook/entries/forward_kinematics.html</loc>
+    <lastmod>2025-08-31T23:26:46.461Z</lastmod>
   </url>
   <url>
     <loc>https://karry3775.github.io/logbook/entries/chapter_1_spong_notes.html</loc>
     <lastmod>2025-08-30T20:13:58.328Z</lastmod>
   </url>
   <url>
-    <loc>https://karry3775.github.io/logbook/entries/forward_kinematics.html</loc>
-    <lastmod>2025-08-31T23:26:46.461Z</lastmod>
+    <loc>https://karry3775.github.io/logbook/scripts/fk_using_urdf2casadi.html</loc>
+    <lastmod>2025-08-31T23:12:33.328Z</lastmod>
+  </url>
+  <url>
+    <loc>https://karry3775.github.io/logbook/scripts/fk_using_pytorch_kinematics.html</loc>
+    <lastmod>2025-08-31T22:26:31.517Z</lastmod>
+  </url>
+  <url>
+    <loc>https://karry3775.github.io/logbook/about.html</loc>
+    <lastmod>2025-08-30T22:59:54.280Z</lastmod>
+  </url>
+  <url>
+    <loc>https://karry3775.github.io/logbook/scripts/fk_using_pinnochio.html</loc>
+    <lastmod>2025-08-31T22:03:39.953Z</lastmod>
+  </url>
+  <url>
+    <loc>https://karry3775.github.io/logbook/scripts/fk_using_urdfpy.html</loc>
+    <lastmod>2025-08-31T22:51:38.448Z</lastmod>
+  </url>
+  <url>
+    <loc>https://karry3775.github.io/logbook/index.html</loc>
+    <lastmod>2025-09-02T03:05:23.249Z</lastmod>
+  </url>
+  <url>
+    <loc>https://karry3775.github.io/logbook/entries/fk_in_python.html</loc>
+    <lastmod>2025-08-31T23:23:01.298Z</lastmod>
+  </url>
+  <url>
+    <loc>https://karry3775.github.io/logbook/entries/http_server.html</loc>
+    <lastmod>2025-09-02T03:06:14.356Z</lastmod>
   </url>
   <url>
     <loc>https://karry3775.github.io/logbook/entries/simple_robot.urdf.html</loc>
