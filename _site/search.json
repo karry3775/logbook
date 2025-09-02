@@ -4,7 +4,7 @@
     "href": "logs/daily-logs.html",
     "title": "Logbook",
     "section": "",
-    "text": "Date: 2025-08-31\n\nLooked deeply in URDFs and their structure, came across URDF creator tool which seemed promising.\nCompared various FK python libraries (urdfpy, urdf2casadi, pytorch_kinematics, pinnochio). See fk_in_python\nRefreshed conda basics, and practiced creating new environments over and over gain. As a refresher see this conda_basics\n\n\n\nDate: 2025-08-30\n\nRevised chapter 1, and wrote detailed notes\nStarted writing notes for Forwardk kinematics notes\n\nDenavit–Hartenberg parameters took some time to understand, but in the end the realized that URDF to FK is probably more important.\n\n\n\n\nDate: 2025-08-24\n\nRead through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong\nSpent a bunch of time figuring out the correct format to log notes to github.\nExperimented with Jekyll and Hugo, both of which sucked at rendering LaTex\nFinally after much experimentation Quarto seemed like a good option\nThis is a sample file using quarto’s math rendering link"
+    "text": "Date: 2025-09-01\n\nPracticed C and stumbled across bit manipulation. It was a nice opportunity to go deeper. Ended up writing an article describing them with respect to 8-bit registers. Learnt a bunch of things along the way. See this for more details Bit manipulation notes\nFixed a project I can do in C: Building a HTTP Server. But first need to understand what we are building. Started jotting down some thoughts here Building a HTTP server in C\n\n\n\nDate: 2025-08-31\n\nLooked deeply in URDFs and their structure, came across URDF creator tool which seemed promising.\nCompared various FK python libraries (urdfpy, urdf2casadi, pytorch_kinematics, pinnochio). See fk_in_python\nRefreshed conda basics, and practiced creating new environments over and over gain. As a refresher see this conda_basics\n\n\n\nDate: 2025-08-30\n\nRevised chapter 1, and wrote detailed notes\nStarted writing notes for Forwardk kinematics notes\n\nDenavit–Hartenberg parameters took some time to understand, but in the end the realized that URDF to FK is probably more important.\n\n\n\n\nDate: 2025-08-24\n\nRead through Chatper 1: Introduction to Robotics of “Robot Modelling and control” by Spong\nSpent a bunch of time figuring out the correct format to log notes to github.\nExperimented with Jekyll and Hugo, both of which sucked at rendering LaTex\nFinally after much experimentation Quarto seemed like a good option\nThis is a sample file using quarto’s math rendering link"
   },
   {
     "objectID": "entries/bit_manipulation_in_8_bit_registers.html",
@@ -12,6 +12,34 @@
     "title": "Bit manipulation in 8 bit registers",
     "section": "",
     "text": "Context: Since bit manipulation can be broad. We will explore bit manipulation in the context of a 8-bit register"
+  },
+  {
+    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-define-bits",
+    "href": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-define-bits",
+    "title": "Bit manipulation in 8 bit registers",
+    "section": "I want to define bits",
+    "text": "I want to define bits\nEarlier we defined bits by writing the hex values, but we can do that pretty easily with shifting\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT0 &lt;&lt; 2)\n#define BIT3 (BIT0 &lt;&lt; 3)\n#define BIT4 (BIT0 &lt;&lt; 4)\n#define BIT5 (BIT0 &lt;&lt; 5)\n#define BIT6 (BIT0 &lt;&lt; 6)\n#define BIT7 (BIT0 &lt;&lt; 7)\n\n// OR\n\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT1 &lt;&lt; 1)\n#define BIT3 (BIT2 &lt;&lt; 1)\n#define BIT4 (BIT3 &lt;&lt; 1)\n#define BIT5 (BIT4 &lt;&lt; 1)\n#define BIT6 (BIT5 &lt;&lt; 1)\n#define BIT7 (BIT6 &lt;&lt; 1)"
+  },
+  {
+    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-store-multiple-things-in-the-same-register",
+    "href": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-store-multiple-things-in-the-same-register",
+    "title": "Bit manipulation in 8 bit registers",
+    "section": "I want to store multiple things in the same register",
+    "text": "I want to store multiple things in the same register\n\nA 3-bit MODE section in bits 5-7\nA 5-bit VALUE section in bits 0-4\n\nBits:  7   6   5   4   3   2   1   0\nField: M   M   M   V   V   V   V   V\nNow say i know that i want to store value 3 for MODE, and a value of 4 for value\n#define MODE_SHIFT 5 // starts at 5\n#define VALUE_SHIFT 0 // starts at 0\nunit8_t reg = 0;\n\n// Instead of thinking about the raw value which woud be 3 &lt;&lt; 5 = 96, \n// we can think in relative terms.\nreg |= (3 &lt;&lt; MODE_SHIFT); // Store a value of 3 for MODE\nreg |= (4 &lt;&lt; VALUE_SHIFT); // Store a value of 4 for VALUE"
+  },
+  {
+    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-read-whats-in-mode",
+    "href": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-read-whats-in-mode",
+    "title": "Bit manipulation in 8 bit registers",
+    "section": "I want to read what’s in MODE",
+    "text": "I want to read what’s in MODE\nunit8_t mode = reg &gt;&gt; MODE_SHIFT;"
+  },
+  {
+    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#fast-mult-and-division",
+    "href": "entries/bit_manipulation_in_8_bit_registers.html#fast-mult-and-division",
+    "title": "Bit manipulation in 8 bit registers",
+    "section": "Fast mult and division",
+    "text": "Fast mult and division\nint x = 10;\n// Multiply by 2^5\nprintf(\"%d\", x &lt;&lt; 5); // multiplies by 2^5, prints 320\n// Divide by 2\nprintf(\"%d\", x &gt;&gt; 1); // divides by 2, printfs 5"
   },
   {
     "objectID": "entries/conda_basics.html",
@@ -88,14 +116,14 @@
     "href": "index.html",
     "title": "Logbook",
     "section": "",
-    "text": "Daily logs\nChapter 1: Robot Modelling and Control by Spong, notes\nConda basics\nForward kinematics\n\nForward Kinematics\nFK in python\n\nBit manipulation in 8-bit registers"
+    "text": "Daily logs\nChapter 1: Robot Modelling and Control by Spong, notes\nConda basics\nForward kinematics\n\nForward Kinematics\nFK in python\n\nBit manipulation in 8-bit registers\nBuilding a HTTP server in C"
   },
   {
     "objectID": "index.html#contents",
     "href": "index.html#contents",
     "title": "Logbook",
     "section": "",
-    "text": "Daily logs\nChapter 1: Robot Modelling and Control by Spong, notes\nConda basics\nForward kinematics\n\nForward Kinematics\nFK in python\n\nBit manipulation in 8-bit registers"
+    "text": "Daily logs\nChapter 1: Robot Modelling and Control by Spong, notes\nConda basics\nForward kinematics\n\nForward Kinematics\nFK in python\n\nBit manipulation in 8-bit registers\nBuilding a HTTP server in C"
   },
   {
     "objectID": "scripts/fk_using_urdfpy.html",
@@ -189,80 +217,10 @@
     "text": "The derivative of a function (f(x)) is defined as:\n\\[\nf'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\n\\]\nExample in Python using Sympy:\n\nimport sympy as sp\nfrom sympy import init_printing\n\ninit_printing()  # pretty LaTeX-style output in HTML\n\nx = sp.symbols('x')\nf = x**2 + 3*x + 2\n\n# Compute derivative\nsp.diff(f, x)"
   },
   {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#defining-bits",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#defining-bits",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Defining bits",
-    "text": "Defining bits\nEarlier we defined bits by writing the hex values, but we can do that pretty easily with shifting\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT0 &lt;&lt; 2)\n#define BIT2 (BIT0 &lt;&lt; 3)\n#define BIT3 (BIT0 &lt;&lt; 4)\n#define BIT4 (BIT0 &lt;&lt; 5)\n#define BIT5 (BIT0 &lt;&lt; 6)\n#define BIT6 (BIT0 &lt;&lt; 7)\n#deifne BIT7 (BIT0 &lt;&lt; 8)\n\nOR\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT1 &lt;&lt; 1)\n#define BIT2 (BIT2 &lt;&lt; 1)\n#define BIT3 (BIT3 &lt;&lt; 1)\n#define BIT4 (BIT4 &lt;&lt; 1)\n#define BIT5 (BIT5 &lt;&lt; 1)\n#define BIT6 (BIT6 &lt;&lt; 1)\n#deifne BIT7 (BIT7 &lt;&lt; 1)"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#extracting-fields",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#extracting-fields",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Extracting fields",
-    "text": "Extracting fields"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#motivation-1-i-want-to-define-bits",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#motivation-1-i-want-to-define-bits",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Motivation 1: I want to define bits",
-    "text": "Motivation 1: I want to define bits\nEarlier we defined bits by writing the hex values, but we can do that pretty easily with shifting\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT0 &lt;&lt; 2)\n#define BIT2 (BIT0 &lt;&lt; 3)\n#define BIT3 (BIT0 &lt;&lt; 4)\n#define BIT4 (BIT0 &lt;&lt; 5)\n#define BIT5 (BIT0 &lt;&lt; 6)\n#define BIT6 (BIT0 &lt;&lt; 7)\n#deifne BIT7 (BIT0 &lt;&lt; 8)\n\nOR\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT1 &lt;&lt; 1)\n#define BIT2 (BIT2 &lt;&lt; 1)\n#define BIT3 (BIT3 &lt;&lt; 1)\n#define BIT4 (BIT4 &lt;&lt; 1)\n#define BIT5 (BIT5 &lt;&lt; 1)\n#define BIT6 (BIT6 &lt;&lt; 1)\n#deifne BIT7 (BIT7 &lt;&lt; 1)"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#motivation-2-i-want-to-store-multiple-things-in-the-same-register",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#motivation-2-i-want-to-store-multiple-things-in-the-same-register",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Motivation 2: I want to store multiple things in the same register",
-    "text": "Motivation 2: I want to store multiple things in the same register\n\nA 3-bit MODE section in bits 5-7\nA 5-bit VALUE section in bits 0-4\n\nBits:  7   6   5   4   3   2   1   0\nField: M   M   M   V   V   V   V   V\nNow say i know that i want to store value 3 for MODE, and a value of 4 for value\n#define MODE_SHIFT 5 // starts at 5\n#define VALUE_SHIFT 0 // starts at 0\nunit8_t reg = 0;\n\n// Instead of thinking about the raw value which woud be 3 &lt;&lt; 5 = 96, \n// we can think in relative terms.\nreg |= (3 &lt;&lt; MODE_SHIFT); // Store a value of 3 for MODE\nreg |= (4 &lt;&lt; VALUE_SHIFT); // Store a value of 4 for VALUE"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#problem-1-i-want-to-define-bits",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#problem-1-i-want-to-define-bits",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Problem 1: I want to define bits",
-    "text": "Problem 1: I want to define bits\nEarlier we defined bits by writing the hex values, but we can do that pretty easily with shifting\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT0 &lt;&lt; 2)\n#define BIT2 (BIT0 &lt;&lt; 3)\n#define BIT3 (BIT0 &lt;&lt; 4)\n#define BIT4 (BIT0 &lt;&lt; 5)\n#define BIT5 (BIT0 &lt;&lt; 6)\n#define BIT6 (BIT0 &lt;&lt; 7)\n#deifne BIT7 (BIT0 &lt;&lt; 8)\n\nOR\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT1 &lt;&lt; 1)\n#define BIT2 (BIT2 &lt;&lt; 1)\n#define BIT3 (BIT3 &lt;&lt; 1)\n#define BIT4 (BIT4 &lt;&lt; 1)\n#define BIT5 (BIT5 &lt;&lt; 1)\n#define BIT6 (BIT6 &lt;&lt; 1)\n#deifne BIT7 (BIT7 &lt;&lt; 1)"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#problem-2-i-want-to-store-multiple-things-in-the-same-register",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#problem-2-i-want-to-store-multiple-things-in-the-same-register",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Problem 2: I want to store multiple things in the same register",
-    "text": "Problem 2: I want to store multiple things in the same register\n\nA 3-bit MODE section in bits 5-7\nA 5-bit VALUE section in bits 0-4\n\nBits:  7   6   5   4   3   2   1   0\nField: M   M   M   V   V   V   V   V\nNow say i know that i want to store value 3 for MODE, and a value of 4 for value\n#define MODE_SHIFT 5 // starts at 5\n#define VALUE_SHIFT 0 // starts at 0\nunit8_t reg = 0;\n\n// Instead of thinking about the raw value which woud be 3 &lt;&lt; 5 = 96, \n// we can think in relative terms.\nreg |= (3 &lt;&lt; MODE_SHIFT); // Store a value of 3 for MODE\nreg |= (4 &lt;&lt; VALUE_SHIFT); // Store a value of 4 for VALUE"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#problem-3-i-want-to-read-whats-in-mode",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#problem-3-i-want-to-read-whats-in-mode",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Problem 3: I want to read what’s in MODE",
-    "text": "Problem 3: I want to read what’s in MODE\nunit8_t mode = reg &gt;&gt; MODE_SHIFT;"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#fast-mult-and-division",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#fast-mult-and-division",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "Fast mult and division",
-    "text": "Fast mult and division\nint x = 10;\n// Multiply by 2^5\nprintf(\"%d\", x &lt;&lt; 5); // multiplies by 2^5, prints 320\n// Divide by 2\nprintf(\"%d\", x &gt;&gt; 1); // divides by 2, printfs 5"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-store-multiple-things-in-the-same-register",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-store-multiple-things-in-the-same-register",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "I want to store multiple things in the same register",
-    "text": "I want to store multiple things in the same register\n\nA 3-bit MODE section in bits 5-7\nA 5-bit VALUE section in bits 0-4\n\nBits:  7   6   5   4   3   2   1   0\nField: M   M   M   V   V   V   V   V\nNow say i know that i want to store value 3 for MODE, and a value of 4 for value\n#define MODE_SHIFT 5 // starts at 5\n#define VALUE_SHIFT 0 // starts at 0\nunit8_t reg = 0;\n\n// Instead of thinking about the raw value which woud be 3 &lt;&lt; 5 = 96, \n// we can think in relative terms.\nreg |= (3 &lt;&lt; MODE_SHIFT); // Store a value of 3 for MODE\nreg |= (4 &lt;&lt; VALUE_SHIFT); // Store a value of 4 for VALUE"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-read-whats-in-mode",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-read-whats-in-mode",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "I want to read what’s in MODE",
-    "text": "I want to read what’s in MODE\nunit8_t mode = reg &gt;&gt; MODE_SHIFT;"
-  },
-  {
-    "objectID": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-define-bits",
-    "href": "entries/bit_manipulation_in_8_bit_registers.html#i-want-to-define-bits",
-    "title": "Bit manipulation in 8 bit registers",
-    "section": "I want to define bits",
-    "text": "I want to define bits\nEarlier we defined bits by writing the hex values, but we can do that pretty easily with shifting\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT0 &lt;&lt; 2)\n#define BIT3 (BIT0 &lt;&lt; 3)\n#define BIT4 (BIT0 &lt;&lt; 4)\n#define BIT5 (BIT0 &lt;&lt; 5)\n#define BIT6 (BIT0 &lt;&lt; 6)\n#define BIT7 (BIT0 &lt;&lt; 7)\n\n// OR\n\n#define BIT0 (0x01)\n#define BIT1 (BIT0 &lt;&lt; 1)\n#define BIT2 (BIT1 &lt;&lt; 1)\n#define BIT3 (BIT2 &lt;&lt; 1)\n#define BIT4 (BIT3 &lt;&lt; 1)\n#define BIT5 (BIT4 &lt;&lt; 1)\n#define BIT6 (BIT5 &lt;&lt; 1)\n#define BIT7 (BIT6 &lt;&lt; 1)"
+    "objectID": "entries/http_server.html",
+    "href": "entries/http_server.html",
+    "title": "Implementing HTTP Server in C",
+    "section": "",
+    "text": "Research Notes\n\nContext: HTTP is the language of the web. The internet can be thought of as a giant client-server system, and HTTP is how we define the format and transmission of messages that client/server exchanges\nBasic functionality:\n\nYou type an URL on your browser say https://www.google.com\nYour browser sends an HTTP request to the server.\nThe server processes the request, and sends back the HTTP response int this case the HTML page for google.com\n\nBrowser -&gt; HTTP Request -&gt; Server\nServer -&gt; HTTP Response –&gt; Browser\n\n\nHistory:\n\nHTTP/1.1, HTTP/2, HTTP/3, HTTPS\n\nHTTP Status codes:\n\n1xx informational\n2xx Success\n\n200 OK\n\n3xx redirection\n4xx client error\n\n404 (Not found)\n\n5xx Server error\n\nStrutucture of the Request:\n\nStart line: GET /background.png HTTP/1.0 ^ Method ^ Target ^ Version\nHeaders: User-Agent: Mozzilla/5.0\nBody: None for GET\n\nStructure of the Response:\n\nStart line: HTTP/1.1 404 Not found ^ Version ^ Status Code ^ Status text\nHeaders: Content-Type: Image/png\nBody: The file/resource requested\n\nSome other notes:\n\nHTTP 1.0 is stateless\nBased on TCP/IP – Lets explore more on this\n3 parts to the request/response messages\n\n\n\n\nReferences\n\nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview\nWhat is HTTP? How the Internet Works! #1\nSubmarine cables – Connecting continents\nTransport Layer Security (TLS) - Computerphile\nFree CCNA Course by Network chuck"
   }
 ]

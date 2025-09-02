@@ -70,5 +70,8 @@
   },
   "entries/bit_manipulation_in_8_bit_registers.qmd": {
     "bit_manipulation_in_8_bit_registers.html": "a19c40d3"
+  },
+  "entries/http_server.qmd": {
+    "http_server.html": "3a54cd22"
   }
 }

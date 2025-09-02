@@ -1,0 +1,52 @@
+---
+title: "Implementing HTTP Server in C"
+description: "***Last updated***: 2025-09-01"
+format: html
+---
+
+# Research Notes
+
+- Context: HTTP is the language of the web. The internet can be thought of as a giant client-server system,
+  and HTTP is how we define the format and transmission of messages that client/server exchanges
+- Basic functionality:
+    - You type an URL on your browser say https://www.google.com
+    - Your browser sends an **HTTP request** to the server.
+    - The server processes the request, and sends back the **HTTP response** int this case the HTML page for google.com
+        - Browser -> HTTP Request -> Server
+        - Server -> HTTP Response --> Browser
+
+- History:
+    - HTTP/1.1, HTTP/2, HTTP/3, HTTPS
+
+- HTTP Status codes:
+    - 1xx informational
+    - 2xx Success
+        - 200 OK
+    - 3xx redirection
+    - 4xx client error
+        - 404 (Not found)
+    - 5xx Server error
+
+- Strutucture of the Request:
+    - Start line: GET           /background.png  HTTP/1.0
+                  ^ Method      ^ Target         ^ Version
+    - Headers: User-Agent: Mozzilla/5.0
+    - Body: None for GET
+
+- Structure of the Response:
+    - Start line: HTTP/1.1   404            Not found
+                  ^ Version  ^ Status Code  ^ Status text
+    - Headers: Content-Type: Image/png
+    - Body: The file/resource requested
+
+- Some other notes:
+    - HTTP 1.0 is stateless
+    - Based on TCP/IP -- Lets explore more on this
+    - 3 parts to the request/response messages
+
+# References
+- [https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview)
+- [What is HTTP? How the Internet Works! #1](https://www.youtube.com/watch?v=wW2A5SZ3GkI)
+- [Submarine cables -- Connecting continents](https://www.submarinecablemap.com/)
+- [Transport Layer Security (TLS) - Computerphile](https://www.youtube.com/watch?v=0TLDTodL7Lc)
+- [Free CCNA Course by Network chuck](https://www.youtube.com/playlist?list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P)
