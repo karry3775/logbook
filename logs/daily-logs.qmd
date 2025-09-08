@@ -1,4 +1,7 @@
 
+### Date: 2025-09-07
+- Used linux socket programming in C to code a simple tcp_server / client. Haven't pushed the code yet.
+
 ### Date: 2025-09-01
 - Practiced C and stumbled across bit manipulation. It was a nice opportunity to go deeper. Ended up writing an article describing them with respect to 8-bit registers.
   Learnt a bunch of things along the way. See this for more details [Bit manipulation notes](../entries/bit_manipulation_in_8_bit_registers.qmd)
