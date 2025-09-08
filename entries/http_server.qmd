@@ -44,6 +44,45 @@ format: html
     - Based on TCP/IP -- Lets explore more on this
     - 3 parts to the request/response messages
 
+
+# How does the internet work ?
+
+Internet is just a way to connect multiple devices together.
+There are two models that describe how devices can communicate with each other.
+1. OSI model
+2. TCP/IP model
+
+## OSI Model
+
+Each layer talks to each other in the form of `PDU`s or Protocol Data units.
+
+\begin{array}{|l|}
+\hline
+\text{Application}\\
+\hdashline
+\text{Presentation} \\
+\hdashline
+\text{Session} \\
+\hline
+\textcolor{blue}{\textbf{PDU: Data}} \\
+\hline
+\text{Transport} \\
+\hline
+\textcolor{blue}{\textbf{PDU: Segment, Port Address}} \\
+\hline
+\text{Network} \\
+\hline
+\textcolor{blue}{\textbf{PDU: Packet, IP Address}} \\
+\hline
+\text{Data Link} \\
+\hline
+\textcolor{blue}{\textbf{PDU: Frame, Eth/MAC Address}} \\
+\hline
+\text{Physical} \\
+\hline
+\end{array}
+
+
 # References
 - [https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview)
 - [What is HTTP? How the Internet Works! #1](https://www.youtube.com/watch?v=wW2A5SZ3GkI)
