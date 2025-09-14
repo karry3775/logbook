@@ -1,0 +1,37 @@
+---
+title: "Implementing a JSON parser in C"
+description: "***Last updated***: 2025-09-13"
+format: html
+---
+# What are we implementing ?
+
+Lets take a look at Python `json` module, and see the api it offers
+
+- load: Deserializes JSON data from a file-like object
+    - `data = json.load(f)`
+- loads: Deserializes JSON data from a string
+    - `data = json.loads(json_string)`
+- dump: Serializes a Python object into a JSON formatted `stream`, which can be
+      used to write to a file like object
+    - `json.dump(data, fptr, indent=4)
+- dumps: 
+    - Serializes a Python object into a JSON formatted `string`.
+    - `json.dumps(data, indent=4)`
+
+For our implementation, we will also limit to the above four public interface.
+
+# How do we parse JSON ? What are some available methods to do it ?
+
+[From chatgpt]
+
+Parsing approaches
+- Hand-written `recursive descent` parser
+- Lexer + Parser (similar to compiler design)
+
+Understanding JSON grammar
+
+- RFC8259: [https://datatracker.ietf.org/doc/html/rfc8259](https://datatracker.ietf.org/doc/html/rfc8259)
+- json.org : [https://www.json.org/json-en.html](https://www.json.org/json-en.html)
+
+Recursive descent algorithm
+- [https://medium.com/@Mordoc/a-recursive-descent-parser-for-json-a6d68ab938ac](https://medium.com/@Mordoc/a-recursive-descent-parser-for-json-a6d68ab938ac)

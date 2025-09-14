@@ -1,6 +1,13 @@
+### Date: 2025-09-13
+- Wrote a toy implementation of http server in C. [https://github.com/karry3775/my_http_server](https://github.com/karry3775/my_http_server)
+- Wrote a toy implementation of json parser in C. [https://github.com/karry3775/my_json_parser](https://github.com/karry3775/my_json_parser) 
+
 
 ### Date: 2025-09-07
 - Used linux socket programming in C to code a simple tcp_server / client. Haven't pushed the code yet.
+- Found this gem of a channel: [https://www.youtube.com/@nicbarkeragain](https://www.youtube.com/@nicbarkeragain). Specfically this video [Tips for C programming](https://www.youtube.com/watch?v=9UIIMBqq1D4) was super insightful
+- Found this C coding style guide: https://github.com/MaJerle/c-code-style
+- Wrote few [notes on technical writing](entries/technical_writing_notes.qmd)! There was a lot of actionable items.
 
 ### Date: 2025-09-01
 - Practiced C and stumbled across bit manipulation. It was a nice opportunity to go deeper. Ended up writing an article describing them with respect to 8-bit registers.
